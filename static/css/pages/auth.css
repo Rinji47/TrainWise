@@ -1,0 +1,158 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+.auth-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  padding: var(--space-2xl);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.auth-card-large {
+  max-width: 500px;
+}
+
+.auth-card h1 {
+  text-align: center;
+  margin-bottom: var(--space-sm);
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: var(--text-primary);
+}
+
+.auth-card > p:nth-of-type(1) {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+  font-size: 0.95rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.form-extras {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.checkbox-label input {
+  width: auto;
+  cursor: pointer;
+}
+
+.link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.link:hover {
+  text-decoration: underline;
+  color: var(--primary-dark);
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.form-actions .btn {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: var(--border-radius-md);
+}
+
+.form-actions .btn-primary {
+  flex: 1.5;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.remember-me input {
+  width: auto;
+  cursor: pointer;
+}
+
+.forgot-password {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.auth-divider {
+  text-align: center;
+  color: var(--text-secondary);
+  margin: var(--space-lg) 0;
+  font-size: 0.9rem;
+}
+
+.auth-footer {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.auth-footer a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.terms-checkbox {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.terms-checkbox input {
+  width: auto;
+}

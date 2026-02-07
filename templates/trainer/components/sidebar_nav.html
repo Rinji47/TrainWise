@@ -1,0 +1,26 @@
+<aside class="dashboard-sidebar">
+    <div class="sidebar-header">
+        <h2>Trainer Portal</h2>
+        <a href="/" class="back-to-home">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            <span>Back to Home</span>
+        </a>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="{% url 'trainer-dashboard' %}" 
+           class="nav-link {% if request.resolver_match.url_name == 'trainer-dashboard' %}active{% endif %}">
+            Overview
+        </a>
+        <a href="{% url 'trainer-private-classes' %}" 
+           class="nav-link {% if request.resolver_match.url_name == 'trainer-private-classes' %}active{% endif %}">
+            My Classes
+        </a>
+        <a href="{% url 'profile-settings' %}" 
+           class="nav-link {% if request.resolver_match.url_name == 'profile-settings' %}active{% endif %}">
+            Profile
+        </a>
+        <a href="{% url 'logout' %}" class="nav-link logout-link">Logout</a>
+    </nav>
+</aside>

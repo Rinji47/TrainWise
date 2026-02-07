@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Membership - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block extra_css %}
+<style>
+.membership-summary {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 2px solid;
+}
+
+.membership-summary.active {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    border-color: var(--primary);
+    color: #065f46;
+}
+
+.membership-summary.inactive {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    border-color: #ef4444;
+    color: #991b1b;
+}
+
+.filters-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-xl);
+    gap: var(--space-md);
+}
+
+.filters-bar input {
+    height: 42px;
+    padding: 0 1rem;
+    width: 300px;
+    border-radius: 0.5rem;
+    border: 2px solid var(--neutral-200);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.filters-bar input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container user-dashboard">
+    {% include 'user/components/sidebar_nav.html' %} {# optional sidebar #}
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>My Membership</h1>
+            <p>See all your subscriptions and days left until your membership ends.</p>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            <div class="messages-container" style="margin-bottom:1rem;">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Top summary: days left -->
+        {% if days_left %}
+            <div class="membership-summary active">
+                <strong>Membership Active:</strong> {{ days_left }} day{{ days_left|pluralize }} left until your membership ends.
+            </div>
+        {% else %}
+            <div class="membership-summary inactive">
+                You currently have no active membership.
+            </div>
+        {% endif %}
+
+        <!-- Search bar -->
+        <div class="filters-bar">
+            <input type="text" id="searchMemberships" placeholder="Search by plan name or date">
+            <button class="btn btn-secondary" onclick="searchMemberships()">Search</button>
+        </div>
+
+        <!-- Subscriptions Table -->
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Plan Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Status / Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in subscriptions %}
+                    <tr>
+                        <td>{{ sub.plan.plan_name }}</td>
+                        <td>{{ sub.start_date|date:"M d, Y" }}</td>
+                        <td>{{ sub.end_date|date:"M d, Y" }}</td>
+                        <td>₹{{ sub.plan.price }}</td>
+                        <td>
+                            {% if sub.is_active and sub.end_date >= today %}
+                            <form method="POST" action="{% url 'cancel-membership' sub.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" 
+                                        onclick="return confirm('Are you sure you want to cancel this subscription?');"
+                                        style="padding:0.4rem 0.8rem; font-size:0.9rem;">
+                                    Cancel
+                                </button>
+                            </form>
+                            <span style="color:#10b981; font-weight:600;">Active</span>
+                            {% elif sub.end_date < today %}
+                                <span style="color:#888; font-weight:600;">Expired</span>
+                            {% else %}
+                                <span style="color:#ef4444; font-weight:600;">Cancelled</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center">You have no subscriptions.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function searchMemberships() {
+    var input = document.getElementById("searchMemberships").value.toLowerCase();
+    var rows = document.querySelectorAll(".admin-table tbody tr");
+    rows.forEach(row => {
+        var plan = row.cells[0].textContent.toLowerCase();
+        var start = row.cells[1].textContent.toLowerCase();
+        var end = row.cells[2].textContent.toLowerCase();
+        row.style.display = (plan.includes(input) || start.includes(input) || end.includes(input)) ? "" : "none";
+    });
+}
+</script>
+{% endblock %}

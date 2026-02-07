@@ -1,0 +1,14 @@
+<svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dumbbell icon -->
+  <rect x="2" y="15" width="4" height="10" rx="1" fill="#10b981"/>
+  <rect x="12" y="15" width="4" height="10" rx="1" fill="#10b981"/>
+  <rect x="6" y="18" width="6" height="4" rx="1" fill="#10b981"/>
+  
+  <!-- Upward arrow/growth element -->
+  <path d="M8 12 L8 8 L11 11 L8 8 L5 11 Z" fill="#6ee7b7"/>
+  
+  <!-- Text: TrainWise -->
+  <text x="22" y="27" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937">
+    Train<tspan fill="#10b981">Wise</tspan>
+  </text>
+</svg>

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Memberships - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block content %}
+<div class="dashboard-container admin-dashboard">
+
+    {% include 'admin/components/sidebar_nav.html' %}
+
+    <main class="dashboard-main">
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Page header -->
+        <div class="dashboard-header">
+            <h1>Membership Plans</h1>
+            <p>Manage all membership plans in the system</p>
+        </div>
+
+        <!-- Filters and Add button in flex -->
+        <div class="filters-bar">
+            <a href="{% url 'admin-membership-add' %}" class="btn btn-primary">Add New Membership Plan</a>
+        </div>
+
+        <!-- Membership table -->
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Plan Name</th>
+                        <th>Duration (Months)</th>
+                        <th>Price ($)</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plan in memberships %}
+                        <tr>
+                            <td>{{ plan.plan_name }}</td>
+                            <td>{{ plan.duration_months }}</td>
+                            <td>{{ plan.price }}</td>
+                            <td>{{ plan.description|default:"-" }}</td>
+                            <td>
+                                <a class="btn btn-sm btn-warning" href="{% url 'admin-membership-edit' plan.pk %}">Edit</a>
+                                <a class="btn btn-sm btn-danger" href="{% url 'admin-membership-delete' plan.pk %}" onclick="return confirm('Are you sure you want to delete this membership plan?');">Delete</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5" class="text-center">No membership plans found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+{% endblock %}
+

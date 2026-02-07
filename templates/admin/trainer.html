@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Trainers - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block content %}
+<div class="dashboard-container admin-dashboard">
+
+    {% include 'admin/components/sidebar_nav.html' %}
+
+    <main class="dashboard-main">
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <!-- Page header -->
+        <div class="dashboard-header">
+            <h1>Trainer Management</h1>
+            <p>Manage all trainers in the system</p>
+        </div>
+
+        <!-- Filters and Add button in flex -->
+        <div class="filters-bar">
+            <a href="{% url 'admin-trainer-add' %}" class="btn btn-primary">Add New Trainer</a>
+        </div>
+
+        <!-- Trainer table -->
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trainer in trainers %}
+                        <tr>
+                            <td>{{ trainer.full_name }}</td>
+                            <td>{{ trainer.email }}</td>
+                            <td>
+                                {% if trainer.is_active %}
+                                    <span class="badge badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn btn-sm" href="{% url 'trainer-edit' trainer.id %}">Edit</a>
+                                <a class="btn btn-sm btn-danger" href="{% url 'trainer-delete' trainer.id %}" onclick="return confirm('Are you sure you want to delete this trainer?');">Delete</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4" class="text-center">No trainers found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+{% endblock %}

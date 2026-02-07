@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Private Class - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block content %}
+<main class="dashboard-main form-page">
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="form-card">
+        <h1 class="form-title">Edit Private Class</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Member</label>
+                <input type="text" value="{{ private_class.member.get_full_name }}" disabled class="form-control form-control--readonly">
+            </div>
+
+            <div class="form-group">
+                <label>Trainer</label>
+                <select name="trainer" class="form-control">
+                    <option value="">-- Select Trainer --</option>
+                    {% for trainer in trainers %}
+                        <option value="{{ trainer.id }}" {% if private_class.trainer and private_class.trainer.id == trainer.id %}selected{% endif %}>
+                            {{ trainer.get_full_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Duration Hours (max 3)</label>
+                <input type="number" name="duration_hours" min="1" max="3" value="{{ private_class.duration_hours }}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Duration Months</label>
+                <input type="number" name="duration_months" min="0" value="{{ private_class.duration_months }}" class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                Update Class
+            </button>
+        </form>
+
+        <a href="{% url 'admin-private-classes-list' %}" class="btn btn-secondary btn-full form-back-link">
+            ← Back to Classes
+        </a>
+    </div>
+</main>
+{% endblock %}

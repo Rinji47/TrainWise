@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trainer Dashboard - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Stats Grid and Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.stat-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: var(--space-xl);
+    text-align: center;
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.08);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+    border-color: var(--primary);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: var(--space-sm);
+    line-height: 1;
+}
+
+.stat-label {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.session-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.session-card h3 {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.session-card p {
+    margin: 0.2rem 0;
+    font-size: 0.95rem;
+}
+
+.badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-success { background-color: #22c55e; color: white; }
+.badge-secondary { background-color: #6b7280; color: white; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    {% include 'trainer/components/sidebar_nav.html' %}
+
+    <main class="dashboard-main">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1>Welcome, {{ user.full_name }}!</h1>
+            <p>{{ user.specialization|default:"N/A" }} | {{ user.experience_years|default:0 }} year{% if user.experience_years|default:0 != 1 %}s{% endif %} experience</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ classes_today|default:0 }}</div>
+                <div class="stat-label">Sessions Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ total_classes|default:0 }}</div>
+                <div class="stat-label">Total Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ unique_members|default:0 }}</div>
+                <div class="stat-label">Members Trained</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">₹{{ total_revenue|floatformat:0 }}</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+        </div>
+
+        <!-- Today's Sessions -->
+        <div class="dashboard-section">
+            <h2>Today's Private Sessions</h2>
+            {% if today_classes %}
+                <div class="dashboard-cards">
+                    {% for session in today_classes|slice:":2" %}
+                        <div class="session-card">
+                            <h3>{{ session.member.full_name|default:"Unknown Member" }}</h3>
+                            <p>
+                                {{ session.start_time|time:"H:i"|default:"N/A" }} - {{ session.end_time|time:"H:i"|default:"N/A" }}
+                            </p>
+                            <p>Duration: {{ session.duration_hours|default:1 }} hr{% if session.duration_hours|default:1 != 1 %}s{% endif %}, 
+                            {{ session.duration_months|default:1 }} month{% if session.duration_months|default:1 != 1 %}s{% endif %}</p>
+                            <p>Price: ₹{{ session.price|default:0 }}</p>
+                            <p>Status: 
+                                {% if session.is_active %}
+                                    <span class="badge badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Inactive</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">No sessions scheduled for today</p>
+            {% endif %}
+        </div>
+
+        <!-- Upcoming Sessions -->
+        <div class="dashboard-section">
+            <h2>Upcoming Private Sessions (Next 7 Days)</h2>
+            {% if upcoming_classes %}
+                <div class="dashboard-cards">
+                    {% for session in upcoming_classes|slice:":2" %}
+                        <div class="session-card">
+                            <h3>{{ session.member.full_name|default:"Unknown Member" }}</h3>
+                            <p>
+                                {{ session.start_date|date:"D, M d" }} 
+                                {% if session.start_time and session.end_time %}
+                                    {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}
+                                {% else %}
+                                    Time not set
+                                {% endif %}
+                            </p>
+                            <p>Duration: {{ session.duration_hours|default:1 }} hr{% if session.duration_hours|default:1 != 1 %}s{% endif %}, 
+                            {{ session.duration_months|default:1 }} month{% if session.duration_months|default:1 != 1 %}s{% endif %}</p>
+                            <p>Price: ₹{{ session.price|default:0 }}</p>
+                            <p>Status: 
+                                {% if session.is_active %}
+                                    <span class="badge badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Inactive</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">No upcoming sessions in the next 7 days</p>
+            {% endif %}
+        </div>
+
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/trainer-dashboard.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Failed - TrainWise{% endblock %}
+
+{% block content %}
+
+<div class="payment-result-container" style="max-width: 600px; margin: 3rem auto; padding: 2rem; text-align: center;">
+    
+    <!-- Failure Icon -->
+    <div style="font-size: 4rem; margin-bottom: 1rem; color: #dc3545;">
+        ✕
+    </div>
+
+    <h1 style="color: #dc3545; margin-bottom: 0.5rem;">Payment Failed</h1>
+    <p style="font-size: 1.1rem; color: #666; margin-bottom: 2rem;">
+        Your payment could not be processed. Please try again or contact support.
+    </p>
+
+    <!-- Failure Details -->
+    {% if pending_data %}
+    <div style="background: #f9f9f9; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; text-align: left;">
+        <h2 style="font-size: 1.2rem; margin-bottom: 1rem;">Order Details</h2>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e0e0e0;">
+            <span>Amount:</span>
+            <strong>₹{{ pending_data.amount }}</strong>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0;">
+            <span>Status:</span>
+            <strong style="color: #dc3545;">Failed</strong>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="{% url 'membership-plans' %}" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
+            View Plans
+        </a>
+        <a href="{% url 'user-dashboard' %}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Info Box -->
+    <div style="background: #f8d7da; padding: 1.5rem; border-radius: 8px; margin-top: 2rem; border-left: 4px solid #dc3545;">
+        <h3 style="margin-top: 0; color: #721c24;">Troubleshooting</h3>
+        <ul style="margin: 0.5rem 0; padding-left: 1.5rem; color: #721c24; font-size: 0.95rem;">
+            <li>Check your internet connection and try again</li>
+            <li>Ensure you have sufficient balance in your eSewa account</li>
+            <li>Verify your eSewa account is active</li>
+            <li>If the problem persists, contact our support team</li>
+        </ul>
+    </div>
+
+    <!-- Contact Support -->
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666;">
+            Need help? <a href="{% url 'home' %}" style="color: #007bff; text-decoration: none;">Contact Support</a>
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

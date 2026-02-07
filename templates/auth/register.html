@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - TrainWise{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card auth-card-large">
+        <h1>Create Your Account</h1>
+        <p>Join TrainWise and start your fitness journey</p>
+
+        <form method="POST" class="auth-form" id="registerForm">
+            {% csrf_token %}
+
+            <!-- Username field -->
+            <div class="form-group">
+                <label for="username">Username <span style="color:red;">*</span></label>
+                <input type="text" id="username" name="username" required placeholder="Choose a username" class="form-control">
+                {% if form.username.errors %}
+                    <span class="error">{{ form.username.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" required class="form-control">
+                    {% if form.first_name.errors %}
+                        <span class="error">{{ form.first_name.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" required class="form-control">
+                    {% if form.last_name.errors %}
+                        <span class="error">{{ form.last_name.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required class="form-control">
+                {% if form.email.errors %}
+                    <span class="error">{{ form.email.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required class="form-control">
+                {% if form.phone.errors %}
+                    <span class="error">{{ form.phone.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required class="form-control">
+                <small>Minimum 8 characters with uppercase, lowercase, and numbers</small>
+                {% if form.password.errors %}
+                    <span class="error">{{ form.password.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="password_confirm">Confirm Password</label>
+                <input type="password" id="password_confirm" name="password_confirm" required class="form-control">
+                {% if form.password_confirm.errors %}
+                    <span class="error">{{ form.password_confirm.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender" class="form-control">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" min="0" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="height">Height (cm)</label>
+                <input type="number" step="0.01" id="height" name="height" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Weight (kg)</label>
+                <input type="number" step="0.01" id="weight" name="weight" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="fitness_goal">Fitness Goal</label>
+                <input type="text" id="fitness_goal" name="fitness_goal" class="form-control">
+            </div>
+
+            <label class="terms-checkbox">
+                <input type="checkbox" name="agree_terms" required>
+                I agree to the Terms of Service and Privacy Policy
+            </label>
+
+            {% if form.non_field_errors %}
+                <div class="error-alert">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+        </form>
+
+        <p class="auth-footer">
+            Already have an account? <a href="{% url 'login' %}">Login here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}"></script>
+{% endblock %}

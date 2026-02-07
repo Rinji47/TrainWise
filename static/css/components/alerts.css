@@ -1,0 +1,47 @@
+.alert-container {
+  max-width: 1200px;
+  margin: var(--space-lg) auto;
+  padding: 0 var(--space-lg);
+}
+
+.messages-container {
+  margin-bottom: var(--space-lg);
+}
+
+.alert {
+  padding: var(--space-lg);
+  border-radius: 0.5rem;
+  margin-bottom: var(--space-md);
+  animation: slideIn 0.3s ease;
+  border-left: 4px solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-success {
+  background-color: #f0fdf4;
+  border-left-color: #10b981;
+  color: #047857;
+}
+
+.alert-error {
+  background-color: #fef2f2;
+  border-left-color: #ef4444;
+  color: #dc2626;
+}
+
+.alert-warning {
+  background-color: #fffbeb;
+  border-left-color: #f59e0b;
+  color: #b45309;
+}

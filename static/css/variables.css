@@ -1,0 +1,49 @@
+/* Design tokens - Color system */
+:root {
+  /* Primary Colors - Green Theme */
+  --primary: #10b981;
+  --primary-light: #6ee7b7;
+  --primary-dark: #059669;
+
+  /* Neutral Colors */
+  --neutral-50: #f9fafb;
+  --neutral-100: #f3f4f6;
+  --neutral-200: #e5e7eb;
+  --neutral-300: #d1d5db;
+  --neutral-400: #9ca3af;
+  --neutral-500: #6b7280;
+  --neutral-600: #4b5563;
+  --neutral-700: #374151;
+  --neutral-800: #1f2937;
+  --neutral-900: #111827;
+
+  /* Accent Colors */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  /* Semantic tokens */
+  --background: var(--neutral-50);
+  --foreground: var(--neutral-900);
+  --card-bg: white;
+  --card-border: var(--neutral-200);
+  --text-primary: var(--neutral-900);
+  --text-secondary: var(--neutral-500);
+  --border-color: var(--neutral-300);
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Radius */
+  --radius: 0.5rem;
+  --radius-lg: 1rem;
+
+  /* Transitions */
+  --transition: all 0.3s ease;
+}

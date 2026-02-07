@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Trainer - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block content %}
+<main class="dashboard-main form-page">
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                 <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="form-card">
+        <h1 class="form-title">Edit Trainer</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Username <span style="color:red;">*</span></label>
+                <input type="text" name="username" value="{{ trainer.username }}" required
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>First Name <span style="color:red;">*</span></label>
+                <input type="text" name="first_name" value="{{ trainer.first_name }}" required
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Last Name <span style="color:red;">*</span></label>
+                <input type="text" name="last_name" value="{{ trainer.last_name }}" required
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Email <span style="color:red;">*</span></label>
+                <input type="email" name="email" value="{{ trainer.email }}" required
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" name="password" placeholder="Leave blank to keep current password"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Specialization</label>
+                <input type="text" name="specialization" value="{{ trainer.specialization }}"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Experience (Years)</label>
+                <input type="number" name="experience_years" min="0" value="{{ trainer.experience_years }}"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="phone" value="{{ trainer.phone }}"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Gender</label>
+                <select name="gender" class="form-control">
+                    <option value="">Select Gender</option>
+                    <option value="Male" {% if trainer.gender == "Male" %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if trainer.gender == "Female" %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if trainer.gender == "Other" %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Age</label>
+                <input type="number" name="age" min="0" value="{{ trainer.age }}"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Height (cm)</label>
+                <input type="number" step="0.01" name="height" value="{{ trainer.height }}"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Weight (kg)</label>
+                <input type="number" step="0.01" name="weight" value="{{ trainer.weight }}"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="is_active" {% if trainer.is_active %}checked{% endif %}>
+                    Active
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                Update Trainer
+            </button>
+        </form>
+
+        <a href="{% url 'admin-trainers' %}" class="btn btn-secondary btn-full form-back-link">
+            ← Back to Trainers
+        </a>
+    </div>
+</main>
+{% endblock %}

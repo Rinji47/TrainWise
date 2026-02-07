@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Failed - TrainWise{% endblock %}
+
+{% block content %}
+
+<div class="payment-result-container" style="max-width: 600px; margin: 3rem auto; padding: 2rem; text-align: center;">
+    
+    <!-- Failure Icon -->
+    <div style="font-size: 4rem; margin-bottom: 1rem; color: #dc3545;">
+        ✕
+    </div>
+
+    <h1 style="color: #dc3545; margin-bottom: 0.5rem;">Payment Failed</h1>
+    <p style="font-size: 1.1rem; color: #666; margin-bottom: 2rem;">
+        Unfortunately, your payment could not be processed. Your class booking was not confirmed.
+    </p>
+
+    <!-- Error Details -->
+    <div style="background: #f8d7da; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #dc3545;">
+        <h3 style="margin-top: 0; color: #721c24;">Why did this happen?</h3>
+        <ul style="margin: 0.5rem 0; padding-left: 1.5rem; color: #721c24; font-size: 0.95rem;">
+            <li>Insufficient balance in your account</li>
+            <li>Payment gateway connectivity issues</li>
+            <li>Transaction cancelled by the user</li>
+            <li>Invalid payment information</li>
+        </ul>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="{% url 'book-private-class' %}" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
+            Try Again
+        </a>
+        <a href="{% url 'home' %}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
+            Back to Home
+        </a>
+    </div>
+
+    <!-- Info Box -->
+    <div style="background: #e2e3e5; padding: 1.5rem; border-radius: 8px; margin-top: 2rem; border-left: 4px solid #6c757d;">
+        <h3 style="margin-top: 0; color: #383d41;">Need Help?</h3>
+        <p style="margin: 0.5rem 0; color: #383d41;">
+            If you need assistance, please contact our support team or try booking again.
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

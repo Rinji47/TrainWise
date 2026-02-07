@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Private Class Checkout - {{ trainer.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 50px auto;">
+    <div class="card">
+        <div class="card-header">
+            <h2>Private Class Payment</h2>
+        </div>
+        <div class="card-body">
+            <h4>{{ trainer.get_full_name }}</h4>
+            
+            <table class="table">
+                <tr>
+                    <td><strong>Trainer:</strong></td>
+                    <td>{{ trainer.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Date:</strong></td>
+                    <td>{{ pending_data.start_date }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Time:</strong></td>
+                    <td>{{ pending_data.start_time }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Duration:</strong></td>
+                    <td>{{ pending_data.duration_hours }} hour(s), {{ pending_data.duration_months }} month(s)</td>
+                </tr>
+                <tr>
+                    <td><strong>Amount:</strong></td>
+                    <td>Rs. {{ price }}</td>
+                </tr>
+                <tr style="font-size: 18px; font-weight: bold;">
+                    <td><strong>Total Amount:</strong></td>
+                    <td style="color: #007bff;">Rs. {{ price }}</td>
+                </tr>
+            </table>
+
+            <p style="color: #666; font-size: 14px;">
+                You will be redirected to eSewa payment gateway to complete your payment securely.
+            </p>
+
+            <!-- eSewa Payment Form (v2 API) -->
+            <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
+                {% csrf_token %}
+                {{ form|safe }}
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                        Pay with eSewa
+                    </button>
+                    <a href="{% url 'book-private-class' %}" class="btn btn-secondary btn-lg">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Demo Payment Option (for testing when eSewa is unavailable) -->
+            <div style="margin-top: 20px; padding: 15px; background-color: #fff3cd; border-radius: 4px; border: 1px solid #ffc107;">
+                <p style="margin: 0 0 10px 0; color: #856404; font-size: 14px;">
+                    <strong>Testing Mode:</strong> If eSewa is unavailable, use demo payment to test the flow.
+                </p>
+                <form method="POST" action="{% url 'book-private-class-details' trainer.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="duration_hours" value="{{ pending_data.duration_hours }}">
+                    <input type="hidden" name="duration_months" value="{{ pending_data.duration_months }}">
+                    <input type="hidden" name="start_date" value="{{ pending_data.start_date }}">
+                    <input type="hidden" name="start_time" value="{{ pending_data.start_time }}">
+                    <input type="hidden" name="demo_payment" value="true">
+                    <button type="submit" class="btn btn-warning" style="background-color: #ffc107; color: #000;">
+                        Demo Payment (Skip eSewa)
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        border-radius: 8px 8px 0 0;
+        padding: 20px;
+    }
+    
+    .card-body {
+        padding: 30px;
+    }
+    
+    .table {
+        margin: 20px 0;
+        border-collapse: collapse;
+    }
+    
+    .table tr {
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .table td {
+        padding: 12px 0;
+    }
+    
+    .table td:first-child {
+        width: 50%;
+        color: #666;
+    }
+    
+    .d-flex {
+        display: flex;
+    }
+    
+    .gap-3 {
+        gap: 15px;
+    }
+    
+    .flex-grow-1 {
+        flex: 1;
+    }
+    
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+</style>
+{% endblock %}

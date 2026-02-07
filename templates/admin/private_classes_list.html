@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Private Classes - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block content %}
+<div class="dashboard-container admin-dashboard">
+    {% include 'admin/components/sidebar_nav.html' %}
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>Private Classes</h1>
+            <p>Manage all member-created private classes</p>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Filters -->
+        <div class="filters-bar">
+        </div>
+
+        <!-- Private Classes table -->
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Trainer</th>
+                        <th>Schedule</th>
+                        <th>Duration (hrs)</th>
+                        <th>Months</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cls in private_classes %}
+                        <tr>
+                            <td>{{ cls.member.get_full_name }}</td>
+                            <td>{% if cls.trainer %}{{ cls.trainer.get_full_name }}{% else %}-{% endif %}</td>
+                            <td>
+                                {{ cls.start_date|date:"M d, Y" }} 
+                                {{ cls.start_time|time:"H:i" }} - {{ cls.end_time|time:"H:i" }}
+                            </td>
+                            <td>{{ cls.duration_hours }}</td>
+                            <td>{{ cls.duration_months }}</td>
+                            <td>
+                                {% if cls.is_active %}
+                                    <span class="badge badge-active">Active</span>
+                                {% else %}
+                                    <span class="badge badge-inactive">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-info" href="{% url 'admin-private-class-edit' cls.id %}">Edit</a>
+                                <a class="btn btn-sm btn-warning" href="{% url 'admin-private-class-toggle' cls.id %}">
+                                    {% if cls.is_active %}Deactivate{% else %}Activate{% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="7" class="text-center">No private classes found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+{% endblock %}
+

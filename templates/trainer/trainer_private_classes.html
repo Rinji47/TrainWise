@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Private Classes - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Stats Grid and Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.stat-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: var(--space-xl);
+    text-align: center;
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.08);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+    border-color: var(--primary);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: var(--space-sm);
+    line-height: 1;
+}
+
+.stat-label {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-success { background-color: #22c55e; color: white; }
+.badge-secondary { background-color: #6b7280; color: white; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    {% include 'trainer/components/sidebar_nav.html' %}
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>My Private Classes</h1>
+            <p>Total Revenue: ₹{{ total_revenue }}</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ total_sessions }}</div>
+                <div class="stat-label">Total Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ active_sessions }}</div>
+                <div class="stat-label">Active Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ upcoming_sessions }}</div>
+                <div class="stat-label">Upcoming Sessions</div>
+            </div>
+        </div>
+
+        <!-- Classes Table -->
+        <div class="table-responsive">
+            <table class="admin-table" id="classesTable">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Start Date</th>
+                        <th>End Date</th> <!-- Added End Date -->
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Duration (hrs)</th>
+                        <th>Months</th>
+                        <th>Price (₹)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for class in trainer_classes %}
+                    <tr>
+                        <td>{{ class.member.full_name }}</td>
+                        <td>{{ class.start_date|date:"M d, Y" }}</td>
+                        <td>{{ class.end_date|date:"M d, Y" }}</td> <!-- Display End Date -->
+                        <td>{{ class.start_time|time:"H:i" }}</td>
+                        <td>{{ class.end_time|time:"H:i" }}</td>
+                        <td>{{ class.duration_hours }}</td>
+                        <td>{{ class.duration_months }}</td>
+                        <td>₹{{ class.price }}</td>
+                        <td>
+                            <span class="badge {% if class.is_active %}badge-success{% else %}badge-secondary{% endif %}">
+                                {% if class.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

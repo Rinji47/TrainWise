@@ -1,0 +1,25 @@
+/* Import all modular CSS files */
+@import url("./variables.css");
+@import url("./global.css");
+@import url("./typography.css");
+
+/* Components */
+@import url("./components/buttons.css");
+@import url("./components/forms.css");
+@import url("./components/navbar.css");
+@import url("./components/footer.css");
+@import url("./components/modal.css");
+@import url("./components/alerts.css");
+@import url("./components/cards.css");
+@import url("./components/tables.css");
+
+/* Pages */
+@import url("./pages/home.css");
+@import url("./pages/auth.css");
+@import url("./pages/dashboard.css");
+@import url("./pages/browse-classes.css");
+@import url("./pages/admin.css");
+@import url("./pages/trainer.css");
+
+/* Responsive */
+@import url("./responsive.css");

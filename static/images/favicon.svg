@@ -1,0 +1,9 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Simple dumbbell icon for favicon -->
+  <rect x="4" y="12" width="3" height="8" rx="1" fill="#10b981"/>
+  <rect x="25" y="12" width="3" height="8" rx="1" fill="#10b981"/>
+  <rect x="7" y="14.5" width="18" height="3" rx="1" fill="#10b981"/>
+  
+  <!-- Growth arrow -->
+  <path d="M16 8 L16 4 L20 8 L16 4 L12 8" stroke="#6ee7b7" stroke-width="2" fill="none"/>
+</svg>

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Members - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block content %}
+<div class="dashboard-container admin-dashboard">
+    {% include 'admin/components/sidebar_nav.html' %}
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>Members</h1>
+            <p>Manage all members in the system</p>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Filters and Add button -->
+        <div class="filters-bar">
+            <a href="{% url 'admin-members-add' %}" class="btn btn-primary">Add New Member</a>
+        </div>
+
+        <!-- Members table -->
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Age</th>
+                        <th>Membership Start</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in members %}
+                        <tr>
+                            <td>{{ member.full_name }}</td>
+                            <td>{{ member.email }}</td>
+                            <td>{{ member.phone|default:"-" }}</td>
+                            <td>{{ member.age|default:"-" }}</td>
+                            <td>{{ member.membership_start_date|date:"M d, Y"|default:"-" }}</td>
+                            <td>
+                                <a class="btn btn-sm btn-info" href="{% url 'admin-members-edit' member.id %}">Edit</a>
+                                <a class="btn btn-sm btn-danger" href="{% url 'admin-members-delete' member.id %}" onclick="return confirm('Are you sure you want to delete {{ member.full_name }}?');">Delete</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="6" class="text-center">No members found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+{% endblock %}

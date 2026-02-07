@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}First-Time Setup - TrainWise{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h1>First-Time Login</h1>
+        <p>Enter your email to set up your password</p>
+
+        {% if messages %}
+            <div class="alert alert-error">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required class="form-control" placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required class="form-control" placeholder="Enter your username">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Continue</button>
+        </form>
+
+        <p class="auth-footer">
+            Back to <a href="{% url 'login' %}" class="link">Login</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

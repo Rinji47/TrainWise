@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Private Class Booking Confirmed - TrainWise{% endblock %}
+
+{% block content %}
+
+<div class="payment-result-container" style="max-width: 600px; margin: 3rem auto; padding: 2rem; text-align: center;">
+    
+    <!-- Success Icon -->
+    <div style="font-size: 4rem; margin-bottom: 1rem; color: #28a745;">
+        ✓
+    </div>
+
+    <h1 style="color: #28a745; margin-bottom: 0.5rem;">Booking Confirmed!</h1>
+    <p style="font-size: 1.1rem; color: #666; margin-bottom: 2rem;">
+        Your private class booking has been confirmed and payment processed.
+    </p>
+
+    <!-- Class Details -->
+    <div style="background: #f9f9f9; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; text-align: left;">
+        <h2 style="font-size: 1.2rem; margin-bottom: 1rem;">Class Details</h2>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e0e0e0;">
+            <span>Trainer:</span>
+            <strong>{{ private_class.trainer.get_full_name }}</strong>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e0e0e0;">
+            <span>Date:</span>
+            <strong>{{ private_class.start_date }}</strong>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e0e0e0;">
+            <span>Time:</span>
+            <strong>{{ private_class.start_time }}</strong>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e0e0e0;">
+            <span>Duration:</span>
+            <strong>{{ private_class.duration_hours }} hour(s), {{ private_class.duration_months }} month(s)</strong>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0;">
+            <span>Amount Paid:</span>
+            <strong style="color: #28a745;">Rs. {{ payment.amount }}</strong>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="{% url 'my-booked-sessions' %}" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
+            View My Sessions
+        </a>
+        <a href="{% url 'home' %}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
+            Continue to Home
+        </a>
+    </div>
+
+    <!-- Info Box -->
+    <div style="background: #d4edda; padding: 1.5rem; border-radius: 8px; margin-top: 2rem; border-left: 4px solid #28a745;">
+        <h3 style="margin-top: 0; color: #155724;">What's Next?</h3>
+        <ul style="margin: 0.5rem 0; padding-left: 1.5rem; color: #155724;">
+            <li>Your class is confirmed and the trainer has been notified</li>
+            <li>Check your email for booking confirmation</li>
+            <li>You can manage your bookings in "My Sessions"</li>
+        </ul>
+    </div>
+
+</div>
+
+{% endblock %}

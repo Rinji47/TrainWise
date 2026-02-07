@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Member Dashboard - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Enhanced Membership Status Badges */
+.badge {
+    padding: 0.4rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.badge-active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.badge-expired {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.badge-cancelled {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: white;
+}
+
+/* Enhanced booking and subscription cards */
+.booking-card, .subscription-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: var(--space-xl);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border: 1px solid var(--card-border);
+}
+
+.booking-card:hover, .subscription-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+}
+
+/* Profile grid enhancements */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+.profile-item {
+    background: linear-gradient(135deg, #f9fafb, white);
+    padding: var(--space-lg);
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--primary);
+}
+
+.profile-item label {
+    font-weight: 600;
+    color: var(--neutral-800);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-item p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0;
+}
+
+/* Dashboard section improvements */
+.dashboard-section h2 {
+    margin-bottom: var(--space-lg);
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.dashboard-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    border-radius: 2px;
+}
+
+/* Stats Grid and Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.stat-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: var(--space-xl);
+    text-align: center;
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.08);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+    border-color: var(--primary);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: var(--space-sm);
+    line-height: 1;
+}
+
+.stat-label {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    {% include 'user/components/sidebar_nav.html' %}
+
+    <main class="dashboard-main">
+
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1>Welcome, {% if user.first_name and user.last_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.username }}{% endif %}!</h1>
+            <p>Member since {{ user.date_joined|date:"M d, Y" }}</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ upcoming_bookings_count }}</div>
+                <div class="stat-label">Upcoming Bookings</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-value">{{ membership_status }}</div>
+                <div class="stat-label">Membership Status</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-value">{{ days_remaining }}</div>
+                <div class="stat-label">Days Left</div>
+            </div>
+        </div>
+
+        <!-- Membership Section -->
+        <div class="dashboard-section">
+            <h2>Active Membership</h2>
+
+            {% if active_subscription %}
+                <div class="subscription-card">
+                    <h3>Membership Details</h3>
+
+                    <div class="subscription-details">
+                        <p><strong>Valid Until:</strong> {{ active_subscription.end_date|date:"M d, Y" }}</p>
+                        <p><strong>Days Remaining:</strong> {{ days_remaining }} day{{ days_remaining|pluralize }}</p>
+                        <p><strong>Status:</strong>
+                            {% if active_subscription.status == "cancelled" %}
+                                <span class="badge badge-cancelled">Cancelled</span>
+                            {% elif days_remaining > 0 %}
+                                <span class="badge badge-active">Active</span>
+                            {% else %}
+                                <span class="badge badge-expired">Expired</span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a href="{% url 'my-memberships' %}" class="btn btn-primary">Extend Membership</a>
+                        <a href="{% url 'browse-plans' %}" class="btn btn-secondary">View Plans</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No active membership</p>
+                    <a href="{% url 'browse-plans' %}" class="btn btn-primary">View Plans & Subscribe</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Upcoming Bookings -->
+        <div class="dashboard-section">
+            <h2>Upcoming Bookings</h2>
+            <div class="bookings-list">
+                {% if upcoming_bookings %}
+                    {% for booking in upcoming_bookings %}
+                        <div class="booking-card">
+                            <div class="booking-info">
+                                <h3>Private Class</h3>
+                                <p><strong>{{ booking.start_date|date:"l, M d" }} at {{ booking.start_time|time:"H:i" }}</strong></p>
+                                {% if booking.trainer %}
+                                    <p>Trainer: {{ booking.trainer.full_name }}</p>
+                                {% endif %}
+                            </div>
+                            <button
+                                class="btn btn-danger btn-sm"
+                                onclick="cancelBooking({{ booking.id }})"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="empty-state">
+                        No upcoming bookings.
+                        <a href="{% url 'book-private-class' %}">Book a class!</a>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Fitness Profile -->
+        <div class="dashboard-section">
+            <h2>Fitness Profile</h2>
+            {% if user.age or user.weight or user.height or user.fitness_goal %}
+                <div class="profile-grid">
+                    <div class="profile-item"><label>Age</label><p>{{ user.age|default:"Not set" }}</p></div>
+                    <div class="profile-item"><label>Height</label><p>{{ user.height|default:"Not set" }} cm</p></div>
+                    <div class="profile-item"><label>Weight</label><p>{{ user.weight|default:"Not set" }} kg</p></div>
+                    <div class="profile-item"><label>Fitness Goal</label><p>{{ user.fitness_goal|default:"Not set" }}</p></div>
+                </div>
+                <a href="{% url 'profile-settings' %}" class="btn btn-secondary">Update Profile</a>
+            {% else %}
+                <p class="empty-state">Complete your fitness profile to get personalized recommendations</p>
+                <a href="{% url 'profile-settings' %}" class="btn btn-primary">Complete Profile</a>
+            {% endif %}
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-section">
+            <h2>Quick Actions</h2>
+            <div class="action-buttons">
+                <a href="{% url 'book-private-class' %}" class="btn btn-primary">Book Private Classes</a>
+                <a href="{% url 'my-booked-sessions' %}" class="btn btn-secondary">All Bookings</a>
+                <a href="{% url 'my-payments' %}" class="btn btn-secondary">Payment History</a>
+            </div>
+        </div>
+
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/user-dashboard.js' %}"></script>
+{% endblock %}

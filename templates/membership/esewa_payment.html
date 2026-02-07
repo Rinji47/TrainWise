@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Complete Payment - TrainWise{% endblock %}
+
+{% block content %}
+
+<div class="payment-container" style="max-width: 600px; margin: 2rem auto; padding: 2rem; background: #f9f9f9; border-radius: 8px;">
+    
+    <h1 style="text-align: center; margin-bottom: 1.5rem;">Complete Your Payment</h1>
+
+    <!-- Payment Details Summary -->
+    <div class="payment-summary" style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #e0e0e0;">
+        <h2 style="font-size: 1.2rem; margin-bottom: 1rem;">Order Summary</h2>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Plan:</span>
+            <strong>{{ plan.plan_name }}</strong>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Duration:</span>
+            <strong>{{ plan.duration_months }} Month(s)</strong>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Start Date:</span>
+            <strong>{{ subscription.start_date }}</strong>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; padding-top: 1rem; border-top: 2px solid #f0f0f0;">
+            <span style="font-weight: bold;">Total Amount:</span>
+            <strong style="font-size: 1.3rem; color: #007bff;">₹{{ payment.amount }}</strong>
+        </div>
+
+        <p style="font-size: 0.9rem; color: #666; margin: 0;">Payment will be processed through eSewa (Test Mode)</p>
+    </div>
+
+    <!-- eSewa Payment Form -->
+    <form id="esewaForm" method="POST" action="{{ payment_url }}" style="display: none;">
+        {% for key, value in payment_data.items %}
+            <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endfor %}
+    </form>
+
+    <!-- Payment Button -->
+    <div style="text-align: center;">
+        <button type="button" id="paymentBtn" class="btn btn-primary btn-large" 
+                style="padding: 0.75rem 2rem; font-size: 1rem; cursor: pointer;">
+            Pay Now with eSewa - ₹{{ payment.amount }}
+        </button>
+
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+            <a href="{% url 'membership-plans' %}" style="text-decoration: none; color: #007bff;">
+                ← Back to Membership Plans
+            </a>
+        </p>
+    </div>
+
+    <!-- Info Box -->
+    <div style="background: #e7f3ff; padding: 1rem; border-radius: 8px; margin-top: 2rem; border-left: 4px solid #007bff;">
+        <h3 style="margin-top: 0; color: #004085;">ℹ️ Payment Information</h3>
+        <ul style="margin: 0.5rem 0; padding-left: 1.5rem; font-size: 0.9rem;">
+            <li>You will be redirected to eSewa to complete the payment</li>
+            <li>Your subscription will be activated immediately after payment</li>
+            <li>You can view your subscription details in "My Memberships"</li>
+            <li>This is a <strong>TEST MODE</strong> payment. Use test credentials provided by eSewa</li>
+        </ul>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('paymentBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        // Auto-submit the eSewa form
+        document.getElementById('esewaForm').submit();
+    });
+</script>
+
+{% endblock %}

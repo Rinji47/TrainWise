@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Book Private Class - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block content %}
+<main class="dashboard-main form-page">
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="form-card">
+        <h1 class="form-title">Book Private Class with {{ trainer.get_full_name }}</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Start Date -->
+            <div class="form-group">
+                <label>Start Date <span style="color:red;">*</span></label>
+                <input type="date" name="start_date" id="start_date" required class="form-control">
+            </div>
+
+            <!-- Start Time -->
+            <div class="form-group">
+                <label>Start Time <span style="color:red;">*</span></label>
+                <input type="time" name="start_time" id="start_time" required class="form-control">
+            </div>
+
+            <!-- Duration Hours -->
+            <div class="form-group">
+                <label>Duration (hours, max 3) <span style="color:red;">*</span></label>
+                <input type="number" name="duration_hours" id="duration_hours" min="1" max="3" value="1" required class="form-control">
+            </div>
+
+            <!-- Subscription Length -->
+            <div class="form-group">
+                <label>Subscription Length (months) <span style="color:red;">*</span></label>
+                <input type="number" name="duration_months" id="duration_months" min="1" value="1" required class="form-control">
+            </div>
+
+            <!-- Dynamic Price -->
+            <div class="form-group">
+                <label>Estimated Price</label>
+                <input type="text" id="total_price" readonly class="form-control form-control--readonly">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                Save Booking (Test)
+            </button>
+        </form>
+
+        <a href="{% url 'book-private-class' %}" class="btn btn-secondary btn-full form-back-link">
+            ← Back to Trainers
+        </a>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Dynamic Price Calculation
+    const baseRate = 500; // base rate per hour
+    const trainerExperience = {{ trainer.experience_level|default:0 }};
+    const experienceMultiplier = 1 + (Number(trainerExperience) || 0) / 10;
+
+    function updatePrice() {
+        const hours = parseFloat(document.getElementById("duration_hours").value) || 1;
+        const months = parseFloat(document.getElementById("duration_months").value) || 1;
+        const price = hours * months * baseRate * experienceMultiplier;
+        document.getElementById("total_price").value = "₹" + price.toFixed(2);
+    }
+
+    document.getElementById("duration_hours").addEventListener("input", updatePrice);
+    document.getElementById("duration_months").addEventListener("input", updatePrice);
+
+    // Initial calculation
+    updatePrice();
+</script>
+{% endblock %}

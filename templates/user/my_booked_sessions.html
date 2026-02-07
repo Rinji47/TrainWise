@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Booked Sessions - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block content %}
+<div class="dashboard-container user-dashboard">
+    {% include 'user/components/sidebar_nav.html' %} {# optional sidebar for users #}
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <h1>My Booked Sessions</h1>
+            <p>View all your upcoming private classes and cancel if needed.</p>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Search bar -->
+        <div class="filters-bar">
+            <div class="filters-actions">
+                <input type="text" id="searchSessions" placeholder="Search by trainer or date" class="form-control form-control--compact w-250">
+                <button class="btn btn-secondary" onclick="searchSessions()">Search</button>
+            </div>
+        </div>
+
+        <!-- Sessions table -->
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Trainer</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Time</th>
+                        <th>Duration</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in sessions %}
+                    <tr>
+                        <td>{{ session.trainer.get_full_name }}</td>
+                        <td>{{ session.start_date|date:"M d, Y" }}</td>
+                        <td>{{ session.end_date|date:"M d, Y" }}</td>
+                        <td>{{ session.start_time|time:"H:i" }}</td>
+                        <td>{{ session.duration_hours }} hour(s)</td>
+                        <td>₹{{ session.price }}</td>
+                        <td>
+                            {% if not session.is_active %}
+                                <span style="color:#888;">Canceled</span>
+                            {% elif session.end_date < today %}
+                                <span style="color:#888;">Expired</span>
+                            {% else %}
+                                <form method="POST" action="{% url 'cancel-private-class' session.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" 
+                                            onclick="return confirm('Are you sure you want to cancel this session with {{ session.trainer.get_full_name }}?');">
+                                        Cancel
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">You have no booked sessions.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function searchSessions() {
+    var input = document.getElementById("searchSessions").value.toLowerCase();
+    var rows = document.querySelectorAll(".admin-table tbody tr");
+    rows.forEach(row => {
+        var trainer = row.cells[0].textContent.toLowerCase();
+        var startDate = row.cells[1].textContent.toLowerCase();
+        var endDate = row.cells[2].textContent.toLowerCase();
+        row.style.display = (trainer.includes(input) || startDate.includes(input) || endDate.includes(input)) ? "" : "none";
+    });
+}
+</script>
+{% endblock %}

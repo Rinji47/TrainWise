@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if plan %}Edit{% else %}Add{% endif %} Membership Plan - TrainWise{% endblock %}
+{% block body_class %}class="hide-navbar"{% endblock %}
+
+{% block content %}
+<main class="dashboard-main form-page">
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="form-card">
+        <h1 class="form-title">{% if plan %}Edit{% else %}Add{% endif %} Membership Plan</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Plan Name <span style="color:red;">*</span></label>
+                <input type="text" name="plan_name" required value="{{ plan.plan_name|default_if_none:'' }}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Duration (Months) <span style="color:red;">*</span></label>
+                <input type="number" name="duration_months" min="1" required value="{{ plan.duration_months|default_if_none:'' }}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Price ($) <span style="color:red;">*</span></label>
+                <input type="number" name="price" step="0.01" required value="{{ plan.price|default_if_none:'' }}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3" class="form-control">{{ plan.description|default_if_none:'' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="is_active" {% if plan.is_active|default_if_none:True %}checked{% endif %}>
+                    Active
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                {% if plan %}Update{% else %}Add{% endif %} Membership Plan
+            </button>
+        </form>
+
+        <a href="{% url 'admin-memberships' %}" class="btn btn-secondary btn-full form-back-link">
+            ← Back to Memberships
+        </a>
+    </div>
+</main>
+{% endblock %}
