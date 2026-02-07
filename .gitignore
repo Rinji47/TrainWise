@@ -6,6 +6,13 @@ __pycache__/
 # Django
 *.log
 local_settings.py
+.env
+.env.*
+.gitfilter-replacements.txt
+
+# Secrets / keys
+*.pem
+*.key
 
 # Database
 *.sqlite3
@@ -24,6 +31,10 @@ htmlcov/
 .DS_Store
 Thumbs.db
 .vscode/
+.idea/
 
 # Static build artifacts
 staticfiles/
+
+# Media uploads
+media/
