@@ -147,3 +147,8 @@ ESEWA_SECRET_KEY = ''  # Leave empty for test
 ESEWA_LIVE = False  # Set to True for production
 ESEWA_SUCCESS_URL = 'esewa-success'
 ESEWA_FAILURE_URL = 'esewa-failure'
+
+# Khalti Configuration
+KHALTI_SECRET_KEY = os.getenv('KHALTI_SECRET_KEY', '')
+KHALTI_ENV = os.getenv('KHALTI_ENV', 'sandbox')  # 'sandbox' or 'production'
+KHALTI_WEBSITE_URL = os.getenv('KHALTI_WEBSITE_URL', 'http://localhost:8000/')

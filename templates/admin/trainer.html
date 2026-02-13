@@ -26,13 +26,23 @@
         </div>
 
         <!-- Filters and Add button in flex -->
-        <div class="filters-bar">
+        <div class="filters-bar filters-bar--pill" data-dt-target="adminTrainersTable">
+            <div class="filters-actions">
+                <div class="filter-pill">
+                    <span class="filter-label">Status</span>
+                    <select data-dt-filter data-dt-column="2" data-dt-autofill="true">
+                        <option value="">All</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
             <a href="{% url 'admin-trainer-add' %}" class="btn btn-primary">Add New Trainer</a>
         </div>
 
         <!-- Trainer table -->
         <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" id="adminTrainersTable">
                 <thead>
                     <tr>
                         <th>Name</th>

@@ -31,4 +31,9 @@ urlpatterns = [
     # Private class payment handlers
     path('private-class/success/<uid>/', views.private_class_success, name='private-class-success'),
     path('private-class/failure/<uid>/', views.private_class_failure, name='private-class-failure'),
+
+    # Khalti placeholders
+    path('khalti/initiate/private-class/', views.khalti_initiate_private_class, name='khalti-initiate-private-class'),
+    path('khalti/return/private-class/<uid>/', views.khalti_return_private_class, name='khalti-return-private-class'),
+
 ]

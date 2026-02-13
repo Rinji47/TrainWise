@@ -36,8 +36,8 @@ urlpatterns = [
 
     path('success/<uid>/', views.success, name='success'),
     path('failure/<uid>/', views.failure, name='failure'),
-    
-    # Payment handlers for pending payments
-    path('payment/success/<uuid:uid>/', views.payment_success, name='payment-success'),
-    path('payment/failure/<uuid:uid>/', views.payment_failure, name='payment-failure'),
+
+    # Khalti placeholders
+    path('khalti/initiate/membership/', views.khalti_initiate_membership, name='khalti-initiate-membership'),
+    path('khalti/return/membership/<uid>/', views.khalti_return_membership, name='khalti-return-membership'),
 ]

@@ -28,29 +28,6 @@
     color: #991b1b;
 }
 
-.filters-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-xl);
-    gap: var(--space-md);
-}
-
-.filters-bar input {
-    height: 42px;
-    padding: 0 1rem;
-    width: 300px;
-    border-radius: 0.5rem;
-    border: 2px solid var(--neutral-200);
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-}
-
-.filters-bar input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-}
 </style>
 {% endblock %}
 
@@ -86,22 +63,38 @@
             </div>
         {% endif %}
 
-        <!-- Search bar -->
-        <div class="filters-bar">
-            <input type="text" id="searchMemberships" placeholder="Search by plan name or date">
-            <button class="btn btn-secondary" onclick="searchMemberships()">Search</button>
+        <!-- Filters -->
+        <div class="filters-bar filters-bar--pill" data-dt-target="membershipTable">
+            <div class="filters-actions">
+                <div class="filter-pill">
+                    <span class="filter-label">Plan</span>
+                    <select data-dt-filter data-dt-column="0" data-dt-autofill="true">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-pill">
+                    <span class="filter-label">Status</span>
+                    <select data-dt-filter data-dt-column="4" data-dt-autofill="true">
+                        <option value="">All</option>
+                        <option value="Active">Active</option>
+                        <option value="Expired">Expired</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         <!-- Subscriptions Table -->
         <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" id="membershipTable">
                 <thead>
                     <tr>
                         <th>Plan Name</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Price</th>
-                        <th>Status / Actions</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -113,6 +106,15 @@
                         <td>₹{{ sub.plan.price }}</td>
                         <td>
                             {% if sub.is_active and sub.end_date >= today %}
+                                <span style="color:#10b981; font-weight:600;">Active</span>
+                            {% elif sub.end_date < today %}
+                                <span style="color:#888; font-weight:600;">Expired</span>
+                            {% else %}
+                                <span style="color:#ef4444; font-weight:600;">Cancelled</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if sub.is_active and sub.end_date >= today %}
                             <form method="POST" action="{% url 'cancel-membership' sub.id %}" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger btn-sm" 
@@ -121,35 +123,17 @@
                                     Cancel
                                 </button>
                             </form>
-                            <span style="color:#10b981; font-weight:600;">Active</span>
-                            {% elif sub.end_date < today %}
-                                <span style="color:#888; font-weight:600;">Expired</span>
                             {% else %}
-                                <span style="color:#ef4444; font-weight:600;">Cancelled</span>
+                                <span class="text-muted">—</span>
                             {% endif %}
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="5" class="text-center">You have no subscriptions.</td></tr>
+                    <tr><td colspan="6" class="text-center">You have no subscriptions.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </main>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function searchMemberships() {
-    var input = document.getElementById("searchMemberships").value.toLowerCase();
-    var rows = document.querySelectorAll(".admin-table tbody tr");
-    rows.forEach(row => {
-        var plan = row.cells[0].textContent.toLowerCase();
-        var start = row.cells[1].textContent.toLowerCase();
-        var end = row.cells[2].textContent.toLowerCase();
-        row.style.display = (plan.includes(input) || start.includes(input) || end.includes(input)) ? "" : "none";
-    });
-}
-</script>
 {% endblock %}

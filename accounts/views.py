@@ -8,7 +8,7 @@ from django.contrib import messages
 from .models import User, WeightLog
 from django.utils import timezone
 from functools import wraps
-from membership.models import MemberSubscription, Payment
+from membership.models import MemberSubscription, Payment, MembershipPlan
 from classes.models import PrivateClass
 from django.db.models import Sum, Count, Q
 from django.shortcuts import render
@@ -28,7 +28,8 @@ def admin_required(view_func):
     return wrapper
 
 def home(request):
-    return render(request, 'home.html')
+    plans = MembershipPlan.objects.order_by('duration_months')[:3]
+    return render(request, 'home.html', {'plans': plans})
 
 
 def register(request):
@@ -257,7 +258,7 @@ def user_dashboard(request):
 
     # Payment stats (NO template sum filter ❌)
     total_payments = sum(p.amount for p in payments)
-    paid_amount = sum(p.amount for p in payments if p.payment_status == 'Paid')
+    paid_amount = sum(p.amount for p in payments if p.payment_status == 'Completed')
     pending_amount = sum(p.amount for p in payments if p.payment_status == 'Pending')
     failed_amount = sum(p.amount for p in payments if p.payment_status == 'Failed')
 
@@ -356,7 +357,7 @@ def admin_dashboard(request):
     active_subscriptions = MemberSubscription.objects.filter(is_active=True).count()
 
     # --- Payments / Revenue ---
-    total_revenue = Payment.objects.filter(payment_status='Paid').aggregate(
+    total_revenue = Payment.objects.filter(payment_status='Completed').aggregate(
         total=Sum('amount')
     )['total'] or 0
 
@@ -400,7 +401,7 @@ def trainer_dashboard(request):
     upcoming_classes_qs = trainer_classes.filter(start_date__gte=today, start_date__lte=today + timedelta(days=7))
 
     # --- Revenue ---
-    total_revenue = Payment.objects.filter(private_class__trainer=trainer, payment_status='Paid').aggregate(total=Sum('amount'))['total'] or 0
+    total_revenue = Payment.objects.filter(private_class__trainer=trainer, payment_status='Completed').aggregate(total=Sum('amount'))['total'] or 0
 
     # --- Prepare classes for template safely ---
     def prepare_session(session):
@@ -432,10 +433,14 @@ def trainer_dashboard(request):
 
 #admin trainer
 
+@login_required
+@admin_required
 def trainer_list(request):
     trainers = User.objects.filter(role='Trainer').order_by('-created_at')
     return render(request, 'admin/trainer.html', {'trainers': trainers})
 
+@login_required
+@admin_required
 def trainer_add(request):
     """Add a new trainer"""
     if request.method == 'POST':
@@ -495,6 +500,8 @@ def trainer_add(request):
     return render(request, 'admin/trainer_add.html')
 
 
+@login_required
+@admin_required
 def trainer_edit(request, trainer_id):
     """Edit existing trainer"""
     trainer = get_object_or_404(User, id=trainer_id, role='Trainer')
@@ -556,6 +563,8 @@ def trainer_edit(request, trainer_id):
 
 
 
+@login_required
+@admin_required
 def trainer_delete(request, trainer_id):
     """Delete a trainer"""
     trainer = get_object_or_404(User, id=trainer_id, role='Trainer')
@@ -609,7 +618,7 @@ def pay_pending_payment(request, payment_id):
             'payment': payment,
             'form': paymentEsewa.generate_form()
         }
-        return render(request, 'membership/esewa_checkout.html', context)
+        return render(request, 'membership/membership_checkout.html', context)
     
     # If private class payment, use private class checkout template
     elif payment.private_class:
@@ -830,7 +839,7 @@ def admin_reports(request):
     total_classes = PrivateClass.objects.count()
     active_sessions_today = PrivateClass.objects.filter(start_date=today, is_active=True).count()
     upcoming_classes = PrivateClass.objects.filter(start_date__gte=today, start_date__lte=today + timedelta(days=7))
-    total_revenue = Payment.objects.filter(payment_status='Paid').aggregate(total=Sum('amount'))['total'] or 0
+    total_revenue = Payment.objects.filter(payment_status='Completed').aggregate(total=Sum('amount'))['total'] or 0
     pending_payments = Payment.objects.filter(payment_status='Pending').count()
     failed_payments = Payment.objects.filter(payment_status='Failed').count()
     recent_bookings = PrivateClass.objects.select_related('member', 'trainer').order_by('-created_at')[:5]
@@ -874,7 +883,7 @@ def admin_reports_pdf(request):
     total_classes = PrivateClass.objects.count()
     active_sessions_today = PrivateClass.objects.filter(start_date=today, is_active=True).count()
     upcoming_classes = PrivateClass.objects.filter(start_date__gte=today, start_date__lte=today + timedelta(days=7))
-    total_revenue = Payment.objects.filter(payment_status__iexact='Paid').aggregate(total=Sum('amount'))['total'] or 0
+    total_revenue = Payment.objects.filter(payment_status__iexact='Completed').aggregate(total=Sum('amount'))['total'] or 0
     pending_payments = Payment.objects.filter(payment_status__iexact='Pending').count()
     failed_payments = Payment.objects.filter(payment_status__iexact='Failed').count()
     recent_bookings = PrivateClass.objects.select_related('member', 'trainer').order_by('-created_at')[:5]

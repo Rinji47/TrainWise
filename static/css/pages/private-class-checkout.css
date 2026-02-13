@@ -1,0 +1,104 @@
+.card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 8px 8px 0 0;
+    padding: 20px;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+.table {
+    margin: 20px 0;
+    border-collapse: collapse;
+}
+
+.table tr {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.table td {
+    padding: 12px 0;
+}
+
+.table td:first-child {
+    width: 50%;
+    color: #666;
+}
+
+.payment-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    margin-top: 16px;
+}
+
+.payment-form {
+    margin: 0;
+}
+
+.payment-actions .btn {
+    width: 100%;
+}
+
+.payment-cancel {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.payment-cancel .btn {
+    min-width: 100%;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}
+
+.btn-khalti {
+    background-color: #512da8;
+    color: white;
+}
+
+.btn-khalti:hover {
+    background-color: #4527a0;
+}
+
+@media (max-width: 640px) {
+    .payment-actions {
+        grid-template-columns: 1fr;
+    }
+}

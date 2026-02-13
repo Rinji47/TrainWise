@@ -24,7 +24,7 @@
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -1px;
-  color: #1f2937;
+  color: #f8fafc;
 }
 
 .hero p {
@@ -33,7 +33,7 @@
   margin-bottom: var(--space-xl);
   line-height: 1.5;
   font-weight: 300;
-  color: #374151;
+  color: rgba(248, 250, 252, 0.85);
 }
 
 .hero-buttons {
@@ -365,12 +365,14 @@
   margin-bottom: var(--space-sm);
   font-size: 1.5rem;
   font-weight: 700;
+  color: #f8fafc;
 }
 
 .cta-section p {
   margin-bottom: var(--space-lg);
   font-size: 1rem;
   opacity: 0.9;
+  color: rgba(248, 250, 252, 0.85);
 }
 
 .cta-section .btn-primary {

@@ -4,10 +4,14 @@ from django.db.models import Sum
 from .models import MembershipPlan, MemberSubscription, Payment
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from datetime import timedelta
 from django.views.decorators.http import require_http_methods
+from django.urls import reverse
+from django.conf import settings
 from django_esewa import EsewaPayment
 import uuid
+import json
+import requests
+from datetime import date, timedelta, datetime
 
 # ===============================
 # Membership Plans
@@ -62,7 +66,7 @@ def admin_payments(request):
 
     # Totals
     total_payments = payments.aggregate(total=Sum('amount'))['total'] or 0
-    paid_amount = payments.filter(payment_status='Paid').aggregate(total=Sum('amount'))['total'] or 0
+    paid_amount = payments.filter(payment_status='Completed').aggregate(total=Sum('amount'))['total'] or 0
     pending_amount = payments.filter(payment_status='Pending').aggregate(total=Sum('amount'))['total'] or 0
     failed_amount = payments.filter(payment_status='Failed').aggregate(total=Sum('amount'))['total'] or 0
 
@@ -110,7 +114,6 @@ def purchase_membership(request, plan_id):
     plan = get_object_or_404(MembershipPlan, id=plan_id)
 
     if request.method == 'POST':
-        from datetime import date, timedelta
         
         today = date.today()  # Use local date, not timezone-aware
         
@@ -211,15 +214,20 @@ def purchase_membership(request, plan_id):
 
         context = {
             'plan': plan,
-            'form': paymentEsewa.generate_form()
+            'form': paymentEsewa.generate_form(),
+            'khalti_amount': int(float(plan.price) * 100),
+            'khalti_order_id': str(transaction_uuid),
+            'khalti_order_name': plan.plan_name,
+            'khalti_website_url': getattr(settings, 'KHALTI_WEBSITE_URL', '') or request.build_absolute_uri('/'),
+            'khalti_return_url': request.build_absolute_uri(
+                reverse('khalti-return-membership', args=[transaction_uuid])
+            ),
         }
-        return render(request, 'membership/esewa_checkout.html', context)
+        return render(request, 'membership/membership_checkout.html', context)
 
     return render(request, 'membership/purchase_membership.html', {'plan': plan})
 
-def success(request, uid):
-    from datetime import datetime
-    
+def success(request, uid):    
     # Get pending subscription data from session
     pending_data = request.session.get('pending_subscription')
     if not pending_data or pending_data.get('transaction_uuid') != str(uid):
@@ -289,6 +297,149 @@ def failure(request, uid):
     }
     messages.error(request, f"Payment failed: {uid}")
     return render(request, "membership/payment_failure.html", context)
+
+
+@login_required
+@require_http_methods(["POST"])
+def khalti_initiate_membership(request):
+    return_url = request.POST.get('return_url')
+    if not return_url:
+        messages.error(request, "Missing Khalti return URL.")
+        return redirect('membership-plans')
+
+    base_url = (
+        "https://khalti.com/api/v2/"
+        if getattr(settings, 'KHALTI_ENV', 'sandbox') == 'production'
+        else "https://dev.khalti.com/api/v2/"
+    )
+    url = f"{base_url}epayment/initiate/"
+    website_url = request.POST.get('website_url') or request.build_absolute_uri('/')
+    amount = request.POST.get('amount')
+    purchase_order_id = request.POST.get('purchase_order_id')
+    purchase_order_name = request.POST.get('purchase_order_name') or 'Membership'
+
+    if not getattr(settings, 'KHALTI_SECRET_KEY', ''):
+        messages.error(request, "Khalti secret key is not configured.")
+        return redirect('membership-plans')
+
+    try:
+        amount_value = int(amount)
+    except (TypeError, ValueError):
+        messages.error(request, "Invalid Khalti amount.")
+        return redirect('membership-plans')
+
+    payload = json.dumps({
+        "return_url": return_url,
+        "website_url": website_url,
+        "amount": amount_value,
+        "purchase_order_id": purchase_order_id,
+        "purchase_order_name": purchase_order_name,
+        "customer_info": {
+        "name": request.user.get_full_name() or request.user.username,
+        "email": request.user.email or "",
+        "phone": getattr(request.user, 'phone', '') or ""
+        }
+    })
+
+    headers = {
+        'Authorization': f"Key {settings.KHALTI_SECRET_KEY}",
+        'Content-Type': 'application/json',
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    if response.status_code != 200:
+        messages.error(request, "Khalti initiate failed. Please try again.")
+        return redirect('membership-plans')
+
+    new_res = json.loads(response.text)
+    payment_url = new_res.get('payment_url')
+    if not payment_url:
+        messages.error(request, "Khalti response missing payment URL.")
+        return redirect('membership-plans')
+
+    return redirect(payment_url)
+
+
+@login_required
+@require_http_methods(["GET"])
+def khalti_return_membership(request, uid):
+    pending_data = request.session.get('pending_subscription')
+    if not pending_data or pending_data.get('transaction_uuid') != str(uid):
+        messages.error(request, "Invalid or expired payment session.")
+        return redirect('membership-plans')
+
+    pidx = request.GET.get('pidx')
+    if not pidx:
+        messages.error(request, "Missing Khalti payment reference. Please try again.")
+        return redirect('failure', uid)
+
+    url = "https://a.khalti.com/api/v2/epayment/lookup/"
+    headers = {
+        'Authorization': f"Key {settings.KHALTI_SECRET_KEY}",
+        'Content-Type': 'application/json',
+    }
+    data = json.dumps({'pidx': pidx})
+
+    try:
+        res = requests.request('POST', url, headers=headers, data=data, timeout=15)
+    except requests.RequestException:
+        messages.error(request, "Khalti verification failed. Please try again.")
+        return redirect('failure', uid)
+
+    if res.status_code != 200:
+        messages.error(request, "Khalti verification failed. Please try again.")
+        return redirect('failure', uid)
+
+    try:
+        new_res = res.json()
+    except ValueError:
+        messages.error(request, "Khalti verification failed. Please try again.")
+        return redirect('failure', uid)
+
+    status = (new_res.get('status') or '').lower()
+    if status != 'completed':
+        messages.error(request, "Khalti payment verification failed. Please try again.")
+        return redirect('failure', uid)
+
+    expected_amount = int(float(pending_data['amount']) * 100)
+    if 'total_amount' in new_res and int(new_res.get('total_amount') or 0) != expected_amount:
+        messages.error(request, "Khalti payment amount mismatch. Please contact support.")
+        return redirect('failure', uid)
+
+    if 'purchase_order_id' in new_res and str(new_res.get('purchase_order_id')) != str(uid):
+        messages.error(request, "Khalti payment reference mismatch. Please contact support.")
+        return redirect('failure', uid)
+
+    plan = get_object_or_404(MembershipPlan, id=pending_data['plan_id'])
+    start_date = datetime.fromisoformat(pending_data['start_date']).date()
+
+    subscription = MemberSubscription.objects.create(
+        member=request.user,
+        plan=plan,
+        start_date=start_date,
+        is_active=True
+    )
+    payment = Payment.objects.create(
+        uid=uid,
+        member_subscription=subscription,
+        amount=pending_data['amount'],
+        tax_amount=0,
+        service_charge=0,
+        delivery_charge=0,
+        payment_method='Khalti',
+        payment_status='Completed'
+    )
+    del request.session['pending_subscription']
+
+    context = {
+        'payment': payment,
+        'subscription': subscription,
+    }
+    messages.success(request, f"Payment completed: {payment.uid}")
+    return render(request, 'membership/payment_success.html', context)
+    
+
+
     
 
 @login_required
@@ -298,7 +449,6 @@ def my_memberships(request):
     - Shows history of all subscriptions
     - Shows days left only for subscriptions that have started
     """
-    from datetime import date
     today = date.today()
 
     # Fetch all subscriptions for the user, ordered by start date
@@ -391,34 +541,3 @@ def my_payments(request):
     }
 
     return render(request, 'user/my_payments.html', context)
-
-
-# =========================
-# Pending Payment Handlers
-# =========================
-@require_http_methods(['GET', 'POST'])
-def payment_success(request, uid):
-    """Handle successful payment for pending payments"""
-    try:
-        payment = Payment.objects.get(uid=uid)
-        payment.payment_status = 'Completed'
-        payment.save()
-        messages.success(request, "Payment completed successfully!")
-        return redirect('user-dashboard')
-    except Payment.DoesNotExist:
-        messages.error(request, "Payment record not found.")
-        return redirect('user-dashboard')
-
-
-@require_http_methods(['GET', 'POST'])
-def payment_failure(request, uid):
-    """Handle failed payment for pending payments"""
-    try:
-        payment = Payment.objects.get(uid=uid)
-        payment.payment_status = 'Failed'
-        payment.save()
-        messages.error(request, "Payment failed. Please try again.")
-        return redirect('user-dashboard')
-    except Payment.DoesNotExist:
-        messages.error(request, "Payment record not found.")
-        return redirect('user-dashboard')

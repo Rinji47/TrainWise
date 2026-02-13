@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}eSewa Payment - {{ plan.plan_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/membership-checkout.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="payment-page">
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1>Complete Your Payment</h1>
+            <p>Secure payment powered by eSewa</p>
+        </div>
+
+        <div class="payment-card">
+            <div class="plan-header">
+                <h2>{{ plan.plan_name }}</h2>
+            </div>
+
+            <div class="payment-details">
+                <div class="detail-row">
+                    <span class="detail-label">Plan:</span>
+                    <span class="detail-value">{{ plan.plan_name }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Duration:</span>
+                    <span class="detail-value">{{ plan.duration_months }} month(s)</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Amount:</span>
+                    <span class="detail-value">Rs. {{ plan.price }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Tax:</span>
+                    <span class="detail-value">Rs. 0</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Service Charge:</span>
+                    <span class="detail-value">Rs. 0</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Delivery Charge:</span>
+                    <span class="detail-value">Rs. 0</span>
+                </div>
+
+                <div class="total-row">
+                    <div class="detail-row">
+                        <span class="detail-label">Total Amount:</span>
+                        <span class="detail-value">Rs. {{ plan.price }}</span>
+                    </div>
+                </div>
+
+                <div class="payment-notice">
+                    <p>You will be redirected to eSewa payment gateway to complete your payment securely.</p>
+                </div>
+
+                <div class="payment-actions">
+                    <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST" class="payment-form">
+                        {% csrf_token %}
+                        {{ form|safe }}
+
+                        <button type="submit" class="btn-esewa">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                                <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                            </svg>
+                            Pay with eSewa
+                        </button>
+                    </form>
+
+                    <!-- Khalti form -->
+                    <form action="{% url 'khalti-initiate-membership' %}" method="POST" class="payment-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="return_url" value="{{ khalti_return_url }}">
+                        <input type="hidden" name="website_url" value="{{ khalti_website_url }}">
+                        <input type="hidden" name="amount" value="{{ khalti_amount }}">
+                        <input type="hidden" name="purchase_order_id" value="{{ khalti_order_id }}">
+                        <input type="hidden" name="purchase_order_name" value="{{ khalti_order_name }}">
+                        <button type="submit" class="btn-khalti">
+                            Pay with Khalti
+                        </button>
+                    </form>
+                </div>
+
+                <div class="payment-cancel">
+                    <a href="{% url 'membership-plans' %}" class="btn-cancel">Cancel</a>
+                </div>
+
+                <div class="security-badges">
+                    <div class="security-badge">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Secure Payment
+                    </div>
+                    <div class="security-badge">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                        SSL Encrypted
+                    </div>
+                    <div class="security-badge">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Instant Activation
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="testing-mode">
+            <div class="testing-header">
+                <div class="testing-icon">!</div>
+                <h3>Testing Mode</h3>
+            </div>
+            <p>If eSewa is unavailable, use demo payment to test the flow.</p>
+            <form method="POST" action="{% url 'purchase-membership' plan.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="demo_payment" value="true">
+                <button type="submit" class="btn-demo">
+                    Demo Payment (Skip eSewa)
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

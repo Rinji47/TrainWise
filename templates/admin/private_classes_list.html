@@ -26,12 +26,34 @@
         {% endif %}
 
         <!-- Filters -->
-        <div class="filters-bar">
+        <div class="filters-bar filters-bar--pill" data-dt-target="adminPrivateClassesTable">
+            <div class="filters-actions">
+                <div class="filter-pill">
+                    <span class="filter-label">Trainer</span>
+                    <select data-dt-filter data-dt-column="1" data-dt-autofill="true">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-pill">
+                    <span class="filter-label">Months</span>
+                    <select data-dt-filter data-dt-column="4" data-dt-autofill="true">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-pill">
+                    <span class="filter-label">Status</span>
+                    <select data-dt-filter data-dt-column="5" data-dt-autofill="true">
+                        <option value="">All</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         <!-- Private Classes table -->
         <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" id="adminPrivateClassesTable">
                 <thead>
                     <tr>
                         <th>Member</th>

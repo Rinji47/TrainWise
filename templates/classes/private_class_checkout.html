@@ -3,6 +3,10 @@
 
 {% block title %}Private Class Checkout - {{ trainer.get_full_name }}{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/private-class-checkout.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container" style="max-width: 600px; margin: 50px auto;">
     <div class="card">
@@ -43,19 +47,34 @@
                 You will be redirected to eSewa payment gateway to complete your payment securely.
             </p>
 
-            <!-- eSewa Payment Form (v2 API) -->
-            <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
-                {% csrf_token %}
-                {{ form|safe }}
-                <div class="d-flex gap-3">
-                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+            <!-- Payment Options -->
+            <div class="payment-actions">
+                <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST" class="payment-form">
+                    {% csrf_token %}
+                    {{ form|safe }}
+                    <button type="submit" class="btn btn-primary btn-lg">
                         Pay with eSewa
                     </button>
-                    <a href="{% url 'book-private-class' %}" class="btn btn-secondary btn-lg">
-                        Cancel
-                    </a>
-                </div>
-            </form>
+                </form>
+
+                <form action="{% url 'khalti-initiate-private-class' %}" method="POST" class="payment-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="return_url" value="{{ khalti_return_url }}">
+                    <input type="hidden" name="website_url" value="{{ khalti_website_url }}">
+                    <input type="hidden" name="amount" value="{{ khalti_amount }}">
+                    <input type="hidden" name="purchase_order_id" value="{{ khalti_order_id }}">
+                    <input type="hidden" name="purchase_order_name" value="{{ khalti_order_name }}">
+                    <button type="submit" class="btn btn-khalti btn-lg">
+                        Pay with Khalti
+                    </button>
+                </form>
+            </div>
+
+            <div class="payment-cancel">
+                <a href="{% url 'book-private-class' %}" class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+            </div>
 
             <!-- Demo Payment Option (for testing when eSewa is unavailable) -->
             <div style="margin-top: 20px; padding: 15px; background-color: #fff3cd; border-radius: 4px; border: 1px solid #ffc107;">
@@ -78,82 +97,4 @@
     </div>
 </div>
 
-<style>
-    .card {
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #e9ecef;
-        border-radius: 8px 8px 0 0;
-        padding: 20px;
-    }
-    
-    .card-body {
-        padding: 30px;
-    }
-    
-    .table {
-        margin: 20px 0;
-        border-collapse: collapse;
-    }
-    
-    .table tr {
-        border-bottom: 1px solid #e9ecef;
-    }
-    
-    .table td {
-        padding: 12px 0;
-    }
-    
-    .table td:first-child {
-        width: 50%;
-        color: #666;
-    }
-    
-    .d-flex {
-        display: flex;
-    }
-    
-    .gap-3 {
-        gap: 15px;
-    }
-    
-    .flex-grow-1 {
-        flex: 1;
-    }
-    
-    .btn {
-        padding: 12px 24px;
-        border: none;
-        border-radius: 4px;
-        font-size: 16px;
-        font-weight: 500;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary {
-        background-color: #007bff;
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-    
-    .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-    }
-    
-    .btn-secondary:hover {
-        background-color: #545b62;
-    }
-</style>
 {% endblock %}

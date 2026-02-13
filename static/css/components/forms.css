@@ -90,6 +90,44 @@ input[readonly] {
   margin-bottom: var(--space-md);
 }
 
+.filters-bar--pill {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--neutral-200);
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.filter-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.filter-pill select {
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 0.2rem 0.4rem;
+  min-width: 140px;
+}
+
+.filter-pill select:focus {
+  outline: none;
+}
+
 .filters-actions {
   display: flex;
   align-items: center;

@@ -91,9 +91,29 @@
             </div>
         </div>
 
+        <!-- Filters -->
+        <div class="filters-bar filters-bar--pill" data-dt-target="trainerClassesTable">
+            <div class="filters-actions">
+                <div class="filter-pill">
+                    <span class="filter-label">Member</span>
+                    <select data-dt-filter data-dt-column="0" data-dt-autofill="true">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-pill">
+                    <span class="filter-label">Status</span>
+                    <select data-dt-filter data-dt-column="8" data-dt-autofill="true">
+                        <option value="">All</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <!-- Classes Table -->
         <div class="table-responsive">
-            <table class="admin-table" id="classesTable">
+            <table class="admin-table" id="trainerClassesTable">
                 <thead>
                     <tr>
                         <th>Member</th>

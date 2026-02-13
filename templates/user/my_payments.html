@@ -27,23 +27,24 @@
         {% endif %}
 
         <!-- Filters -->
-        <div class="filters-bar" style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-            <div class="filter-group" style="display:flex; flex-direction:column;">
-                <label style="font-weight:600; margin-bottom:0.25rem; color:#374151;">Status</label>
-                <select id="statusFilter" onchange="filterPayments()" style="padding:0.5rem; border:2px solid #e5e7eb; border-radius:6px; font-size:0.95rem;">
-                    <option value="">All</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-            </div>
-            <div class="filter-group" style="display:flex; flex-direction:column;">
-                <label style="font-weight:600; margin-bottom:0.25rem; color:#374151;">Method</label>
-                <select id="methodFilter" onchange="filterPayments()" style="padding:0.5rem; border:2px solid #e5e7eb; border-radius:6px; font-size:0.95rem;">
-                    <option value="">All</option>
-                    <option value="Esewa">Esewa</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Card">Card</option>
-                </select>
+        <div class="filters-bar filters-bar--pill" data-dt-target="myPaymentsTable">
+            <div class="filters-actions">
+                <div class="filter-pill">
+                    <span class="filter-label">Status</span>
+                    <select data-dt-filter data-dt-column="5" data-dt-autofill="true">
+                        <option value="">All</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Failed">Failed</option>
+                    </select>
+                </div>
+                <div class="filter-pill">
+                    <span class="filter-label">Method</span>
+                    <select data-dt-filter data-dt-column="4" data-dt-autofill="true">
+                        <option value="">All</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -69,7 +70,7 @@
 
         <!-- Table -->
         <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" id="myPaymentsTable">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -133,19 +134,4 @@
 </div>
 {% endblock %}
 
-{% block extra_js %}
-<script>
-function filterPayments() {
-    const status = document.getElementById("statusFilter").value;
-    const method = document.getElementById("methodFilter").value;
-    document.querySelectorAll(".admin-table tbody tr").forEach(row => {
-        const rowStatus = row.cells[5].innerText.trim();
-        const rowMethod = row.cells[4].innerText.trim();
-        row.style.display =
-            (!status || rowStatus === status) &&
-            (!method || rowMethod === method)
-            ? "" : "none";
-    });
-}
-</script>
-{% endblock %}
+{% block extra_js %}{% endblock %}

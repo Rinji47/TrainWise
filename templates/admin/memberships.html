@@ -27,13 +27,27 @@
         </div>
 
         <!-- Filters and Add button in flex -->
-        <div class="filters-bar">
+        <div class="filters-bar filters-bar--pill" data-dt-target="adminMembershipsTable">
+            <div class="filters-actions">
+                <div class="filter-pill">
+                    <span class="filter-label">Plan</span>
+                    <select data-dt-filter data-dt-column="0" data-dt-autofill="true">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-pill">
+                    <span class="filter-label">Months</span>
+                    <select data-dt-filter data-dt-column="1" data-dt-autofill="true">
+                        <option value="">All</option>
+                    </select>
+                </div>
+            </div>
             <a href="{% url 'admin-membership-add' %}" class="btn btn-primary">Add New Membership Plan</a>
         </div>
 
         <!-- Membership table -->
         <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" id="adminMembershipsTable">
                 <thead>
                     <tr>
                         <th>Plan Name</th>

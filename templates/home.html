@@ -104,34 +104,22 @@
     <h2>Our Membership Plans</h2>
     <p class="section-subtitle">Flexible plans designed for every fitness goal</p>
     <div class="plans-grid-preview">
+        {% for plan in plans %}
         <div class="plan-preview-card">
-            <div class="plan-badge">Most Popular</div>
-            <h3>Monthly Plan</h3>
-            <p>Perfect for getting started with your fitness journey</p>
+            {% if forloop.first %}
+                <div class="plan-badge">Most Popular</div>
+            {% endif %}
+            <h3>{{ plan.plan_name }}</h3>
+            <p>{{ plan.description|default:"Flexible plan designed to match your training goals." }}</p>
             <div class="plan-features">
-                <div class="feature-item">✓ Access to all classes</div>
-                <div class="feature-item">✓ Personal trainer sessions</div>
-                <div class="feature-item">✓ Progress tracking</div>
+                <div class="feature-item">✓ Duration: {{ plan.duration_months }} month{{ plan.duration_months|pluralize }}</div>
+                <div class="feature-item">✓ Price: Rs. {{ plan.price }}</div>
+                <div class="feature-item">✓ Full access to training tools</div>
             </div>
         </div>
-        <div class="plan-preview-card">
-            <h3>Quarterly Plan</h3>
-            <p>Commit to your goals with our 3-month package</p>
-            <div class="plan-features">
-                <div class="feature-item">✓ Everything in Monthly</div>
-                <div class="feature-item">✓ Priority booking</div>
-                <div class="feature-item">✓ Nutrition guidance</div>
-            </div>
-        </div>
-        <div class="plan-preview-card">
-            <h3>Annual Plan</h3>
-            <p>Best value for serious fitness enthusiasts</p>
-            <div class="plan-features">
-                <div class="feature-item">✓ Everything in Quarterly</div>
-                <div class="feature-item">✓ Free guest passes</div>
-                <div class="feature-item">✓ Exclusive workshops</div>
-            </div>
-        </div>
+        {% empty %}
+        <p class="text-muted">No membership plans available.</p>
+        {% endfor %}
     </div>
     <div class="plans-cta">
         <a href="{% url 'membership-plans' %}" class="btn btn-primary">View All Plans</a>

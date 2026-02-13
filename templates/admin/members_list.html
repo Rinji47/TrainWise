@@ -26,13 +26,23 @@
         {% endif %}
 
         <!-- Filters and Add button -->
-        <div class="filters-bar">
+        <div class="filters-bar filters-bar--pill" data-dt-target="adminMembersTable">
+            <div class="filters-actions">
+                <div class="filter-pill">
+                    <span class="filter-label">Status</span>
+                    <select data-dt-filter data-dt-column="5" data-dt-autofill="true">
+                        <option value="">All</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
             <a href="{% url 'admin-members-add' %}" class="btn btn-primary">Add New Member</a>
         </div>
 
         <!-- Members table -->
         <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" id="adminMembersTable">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -40,6 +50,7 @@
                         <th>Phone</th>
                         <th>Age</th>
                         <th>Membership Start</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -52,12 +63,19 @@
                             <td>{{ member.age|default:"-" }}</td>
                             <td>{{ member.membership_start_date|date:"M d, Y"|default:"-" }}</td>
                             <td>
+                                {% if member.is_active %}
+                                    <span class="badge badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
                                 <a class="btn btn-sm btn-info" href="{% url 'admin-members-edit' member.id %}">Edit</a>
                                 <a class="btn btn-sm btn-danger" href="{% url 'admin-members-delete' member.id %}" onclick="return confirm('Are you sure you want to delete {{ member.full_name }}?');">Delete</a>
                             </td>
                         </tr>
                     {% empty %}
-                        <tr><td colspan="6" class="text-center">No members found</td></tr>
+                        <tr><td colspan="7" class="text-center">No members found</td></tr>
                     {% endfor %}
                 </tbody>
             </table>

@@ -25,24 +25,24 @@
         {% endif %}
 
         <!-- Filters -->
-        <div class="filters-bar">
-            <div class="filter-group">
-                <label>Status</label>
-                <select id="statusFilter" onchange="filterPayments()">
-                    <option value="">All</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Failed">Failed</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>Method</label>
-                <select id="methodFilter" onchange="filterPayments()">
-                    <option value="">All</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Card">Card</option>
-                    <option value="Online">Online</option>
-                </select>
+        <div class="filters-bar filters-bar--pill" data-dt-target="adminPaymentsTable">
+            <div class="filters-actions">
+                <div class="filter-pill">
+                    <span class="filter-label">Status</span>
+                    <select data-dt-filter data-dt-column="5" data-dt-autofill="true">
+                        <option value="">All</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Failed">Failed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="filter-pill">
+                    <span class="filter-label">Method</span>
+                    <select data-dt-filter data-dt-column="4" data-dt-autofill="true">
+                        <option value="">All</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -68,7 +68,7 @@
 
         <!-- Table -->
         <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" id="adminPaymentsTable">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -98,7 +98,7 @@
                         <td>{{ payment.payment_method }}</td>
                         <td>
                             <span class="badge 
-                                {% if payment.payment_status == 'Paid' or payment.payment_status == 'Completed' %}badge-paid
+                                {% if payment.payment_status == 'Completed' %}badge-paid
                                 {% elif payment.payment_status == 'Pending' %}badge-pending
                                 {% else %}badge-failed{% endif %}">
                                 {% if payment.payment_status == 'Pending' %}Unpaid{% else %}{{ payment.payment_status }}{% endif %}
@@ -116,55 +116,4 @@
 </div>
 {% endblock %}
 
-{% block extra_js %}
-<style>
-.filters-bar {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.filter-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.filter-group label {
-    font-size: 0.75rem;
-    color: #666;
-    margin-bottom: 0.25rem;
-}
-
-.filter-group select {
-    height: 38px;
-    padding: 0 0.75rem;
-    min-width: 160px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    background: #fff;
-    font-size: 0.9rem;
-}
-
-.filter-group select:focus {
-    outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 2px rgba(79,70,229,.15);
-}
-</style>
-
-<script>
-function filterPayments() {
-    const status = document.getElementById("statusFilter").value;
-    const method = document.getElementById("methodFilter").value;
-    document.querySelectorAll(".admin-table tbody tr").forEach(row => {
-        const rowStatus = row.cells[5].innerText.trim();
-        const rowMethod = row.cells[4].innerText.trim();
-        row.style.display =
-            (!status || rowStatus === status) &&
-            (!method || rowMethod === method)
-            ? "" : "none";
-    });
-}
-
-</script>
-{% endblock %}
+{% block extra_js %}{% endblock %}

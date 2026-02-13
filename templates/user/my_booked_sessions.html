@@ -25,17 +25,30 @@
             </div>
         {% endif %}
 
-        <!-- Search bar -->
-        <div class="filters-bar">
+        <!-- Filters -->
+        <div class="filters-bar filters-bar--pill" data-dt-target="bookedSessionsTable">
             <div class="filters-actions">
-                <input type="text" id="searchSessions" placeholder="Search by trainer or date" class="form-control form-control--compact w-250">
-                <button class="btn btn-secondary" onclick="searchSessions()">Search</button>
+                <div class="filter-pill">
+                    <span class="filter-label">Trainer</span>
+                    <select data-dt-filter data-dt-column="0" data-dt-autofill="true">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-pill">
+                    <span class="filter-label">Status</span>
+                    <select data-dt-filter data-dt-column="6" data-dt-autofill="true">
+                        <option value="">All</option>
+                        <option value="Active">Active</option>
+                        <option value="Expired">Expired</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <!-- Sessions table -->
         <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" id="bookedSessionsTable">
                 <thead>
                     <tr>
                         <th>Trainer</th>
@@ -44,6 +57,7 @@
                         <th>Time</th>
                         <th>Duration</th>
                         <th>Price</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -58,9 +72,18 @@
                         <td>₹{{ session.price }}</td>
                         <td>
                             {% if not session.is_active %}
-                                <span style="color:#888;">Canceled</span>
+                                <span style="color:#888;">Cancelled</span>
                             {% elif session.end_date < today %}
                                 <span style="color:#888;">Expired</span>
+                            {% else %}
+                                <span style="color:#10b981; font-weight:600;">Active</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not session.is_active %}
+                                <span class="text-muted">—</span>
+                            {% elif session.end_date < today %}
+                                <span class="text-muted">—</span>
                             {% else %}
                                 <form method="POST" action="{% url 'cancel-private-class' session.id %}" style="display:inline;">
                                     {% csrf_token %}
@@ -74,7 +97,7 @@
                     </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="7" class="text-center">You have no booked sessions.</td>
+                            <td colspan="8" class="text-center">You have no booked sessions.</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -82,19 +105,4 @@
         </div>
     </main>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function searchSessions() {
-    var input = document.getElementById("searchSessions").value.toLowerCase();
-    var rows = document.querySelectorAll(".admin-table tbody tr");
-    rows.forEach(row => {
-        var trainer = row.cells[0].textContent.toLowerCase();
-        var startDate = row.cells[1].textContent.toLowerCase();
-        var endDate = row.cells[2].textContent.toLowerCase();
-        row.style.display = (trainer.includes(input) || startDate.includes(input) || endDate.includes(input)) ? "" : "none";
-    });
-}
-</script>
 {% endblock %}
