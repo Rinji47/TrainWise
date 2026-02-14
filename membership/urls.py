@@ -37,6 +37,10 @@ urlpatterns = [
     path('success/<uid>/', views.success, name='success'),
     path('failure/<uid>/', views.failure, name='failure'),
 
+    # Dodo payment
+    path('dodo/checkout/', views.dodo_payment_checkout, name='dodo-payment-checkout'),
+    path('dodo/return/<int:user_id>/', views.dodo_payment_return, name='dodo-payment-return'),
+
     # Khalti placeholders
     path('khalti/initiate/membership/', views.khalti_initiate_membership, name='khalti-initiate-membership'),
     path('khalti/return/membership/<uid>/', views.khalti_return_membership, name='khalti-return-membership'),

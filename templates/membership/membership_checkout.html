@@ -76,6 +76,15 @@
                         </button>
                     </form>
 
+                    <!-- Dodo form -->
+                    <form action="{% url 'dodo-payment-checkout' %}" method="POST" class="payment-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="plan_id" value="{{ plan.id }}">
+                        <button type="submit" class="btn-dodo">
+                            Pay with Dodo
+                        </button>
+                    </form>
+
                     <!-- Khalti form -->
                     <form action="{% url 'khalti-initiate-membership' %}" method="POST" class="payment-form">
                         {% csrf_token %}

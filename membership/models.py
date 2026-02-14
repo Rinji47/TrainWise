@@ -15,6 +15,7 @@ class MembershipPlan(models.Model):
     duration_months = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
+    dodo_product_id = models.CharField(max_length=100)
 
     def __str__(self):
         return self.plan_name

@@ -52,8 +52,9 @@
                     <tr>
                         <th>Plan Name</th>
                         <th>Duration (Months)</th>
-                        <th>Price ($)</th>
+                        <th>Price (NPR)</th>
                         <th>Description</th>
+                        <th>Dodo Product ID</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -64,13 +65,14 @@
                             <td>{{ plan.duration_months }}</td>
                             <td>{{ plan.price }}</td>
                             <td>{{ plan.description|default:"-" }}</td>
+                            <td>{{ plan.dodo_product_id|default:"-" }}</td>
                             <td>
                                 <a class="btn btn-sm btn-warning" href="{% url 'admin-membership-edit' plan.pk %}">Edit</a>
                                 <a class="btn btn-sm btn-danger" href="{% url 'admin-membership-delete' plan.pk %}" onclick="return confirm('Are you sure you want to delete this membership plan?');">Delete</a>
                             </td>
                         </tr>
                     {% empty %}
-                        <tr><td colspan="5" class="text-center">No membership plans found</td></tr>
+                        <tr><td colspan="6" class="text-center">No membership plans found</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
