@@ -1,38 +1,38 @@
-// Subscription management - no API calls, just page navigation
+const redirectTo = (path) => {
+  window.location.href = path
+}
+
 function subscribePlan(planId) {
-  window.location.href = `/subscribe/${planId}/`
+  redirectTo(`/subscribe/${planId}/`)
 }
 
 function renewSubscription() {
-  window.location.href = `/subscriptions/renew/`
+  redirectTo(`/subscriptions/renew/`)
 }
 
 function cancelSubscription() {
-  if (confirm("Are you sure you want to cancel your subscription? You will lose access immediately.")) {
-    const form = document.createElement("form")
-    form.method = "POST"
-    form.action = `/subscriptions/cancel/`
-    form.innerHTML = `<input type="hidden" name="csrfmiddlewaretoken" value="${getCookie("csrftoken")}">`
-    document.body.appendChild(form)
-    form.submit()
+  if (!confirm("Are you sure you want to cancel your subscription? You will lose access immediately.")) {
+    return
   }
+
+  const form = document.createElement("form")
+  form.method = "POST"
+  form.action = "/subscriptions/cancel/"
+
+  const csrfToken = getCookie("csrftoken")
+  if (csrfToken) {
+    const input = document.createElement("input")
+    input.type = "hidden"
+    input.name = "csrfmiddlewaretoken"
+    input.value = csrfToken
+    form.appendChild(input)
+  }
+
+  document.body.appendChild(form)
+  form.submit()
 }
 
 function getCookie(name) {
-  let cookieValue = null
-  if (document.cookie && document.cookie !== "") {
-    const cookies = document.cookie.split(";")
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim()
-      if (cookie.substring(0, name.length + 1) === name + "=") {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
-        break
-      }
-    }
-  }
-  return cookieValue
+  const match = document.cookie.split("; ").find((row) => row.startsWith(`${name}=`))
+  return match ? decodeURIComponent(match.split("=")[1]) : null
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("[v0] Subscription page loaded")
-})

@@ -145,6 +145,7 @@
 .feature-icon {
   font-size: 4rem;
   margin-bottom: var(--space-lg);
+  color: var(--primary);
 }
 
 .feature-card h3 {

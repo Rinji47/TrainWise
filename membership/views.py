@@ -121,10 +121,6 @@ def membership_plans(request):
 @login_required
 @login_required
 def purchase_membership(request, plan_id):
-    """
-    Create transaction and show eSawa payment form
-    Stack subscriptions: new subscription starts after the last ACTIVE one ends
-    """
     plan = get_object_or_404(MembershipPlan, id=plan_id)
 
     if request.method == 'POST':

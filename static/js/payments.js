@@ -1,29 +1,25 @@
-// Payment filtering - redirect with query params
+const getValue = (id) => document.getElementById(id)?.value || ""
+
 function filterPayments() {
-  const status = document.getElementById("paymentFilter").value
-  const date = document.getElementById("dateFilter").value
-
   const params = new URLSearchParams()
-  if (status) params.append("status", status)
-  if (date) params.append("date", date)
+  const status = getValue("paymentFilter")
+  const date = getValue("dateFilter")
 
-  if (params.toString()) {
-    window.location.search = params.toString()
+  if (status) params.set("status", status)
+  if (date) params.set("date", date)
+
+  const query = params.toString()
+  if (query) {
+    window.location.search = query
   }
 }
 
-// Download receipt
 function downloadReceipt(paymentId) {
   window.location.href = `/payments/${paymentId}/receipt/`
 }
 
-// Retry payment
 function retryPayment(paymentId) {
   if (confirm("Retry payment for this transaction?")) {
     window.location.href = `/payments/${paymentId}/retry/`
   }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("[v0] Payment history page loaded")
-})
