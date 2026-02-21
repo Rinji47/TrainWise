@@ -156,4 +156,9 @@ ESEWA_FAILURE_URL = 'esewa-failure'
 # Khalti Configuration
 KHALTI_SECRET_KEY = os.getenv('KHALTI_SECRET_KEY', '')
 KHALTI_ENV = os.getenv('KHALTI_ENV', 'sandbox')  # 'sandbox' or 'production'
-KHALTI_WEBSITE_URL = os.getenv('KHALTI_WEBSITE_URL', 'http://localhost:8000/')
+KHALTI_WEBSITE_URL = os.getenv('KHALTI_WEBSITE_URL')
+if not KHALTI_WEBSITE_URL:
+    if DEBUG:
+        KHALTI_WEBSITE_URL = 'http://localhost:8000'
+    else:
+        KHALTI_WEBSITE_URL = 'https://trainwise-eor6.onrender.com'

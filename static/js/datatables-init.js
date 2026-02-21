@@ -81,6 +81,7 @@ const bindTableFilters = (table, dataTable) => {
   });
 };
 
+$.fn.dataTable.ext.errMode = 'none';
 document.addEventListener('DOMContentLoaded', () => {
   if (!window.jQuery || !jQuery.fn || !jQuery.fn.DataTable) {
     return;

@@ -215,14 +215,23 @@ def user_dashboard(request):
     # Active subscription
     # -------------------------
     active_subscription = MemberSubscription.objects.filter(
+    member=user,
+    is_active=True,
+    start_date__lte=today,
+    end_date__gte=today
+    ).order_by('-end_date').first()
+
+    active_private_class = PrivateClass.objects.filter(
         member=user,
         is_active=True,
-        start_date__lte=today,
-        end_date__gte=today
-    ).order_by('-end_date').first()
-    
-    if active_subscription:
-        days_remaining = (active_subscription.end_date - today).days
+        start_date__lte=today
+    ).order_by('-start_date').first()
+
+    if active_subscription or active_private_class:
+        if active_subscription:
+            days_remaining = (active_subscription.end_date - today).days
+        elif active_private_class:
+            days_remaining = (active_private_class.end_date - today).days
         membership_status = "Active"
     else:
         days_remaining = 0
