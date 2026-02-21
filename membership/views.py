@@ -210,8 +210,8 @@ def purchase_membership(request, plan_id):
 
         paymentEsewa = EsewaPayment(
             product_code="EPAYTEST",
-            success_url=f"http://localhost:8000/success/{transaction_uuid}/",
-            failure_url=f"http://localhost:8000/failure/{transaction_uuid}/",
+            success_url=f"https://trainwise-eor6.onrender.com/success/{transaction_uuid}/",
+            failure_url=f"https://trainwise-eor6.onrender.com/failure/{transaction_uuid}/",
             amount=float(plan.price),
             tax_amount=0,
             total_amount=float(plan.price),
@@ -250,8 +250,8 @@ def success(request, uid):
     
     paymentEsewa = EsewaPayment(
         product_code="EPAYTEST",
-        success_url=f"http://localhost:8000/success/{uid}/",
-        failure_url=f"http://localhost:8000/failure/{uid}/",
+        success_url=f"https://trainwise-eor6.onrender.com/success/{uid}/",
+        failure_url=f"https://trainwise-eor6.onrender.com/failure/{uid}/",
         amount=float(pending_data['amount']),
         tax_amount=0,
         total_amount=float(pending_data['amount']),
