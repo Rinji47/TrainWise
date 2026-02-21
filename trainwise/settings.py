@@ -40,7 +40,7 @@ if not SECRET_KEY:
     raise RuntimeError('DJANGO_SECRET_KEY is not set. Add it to .env or your environment.')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
