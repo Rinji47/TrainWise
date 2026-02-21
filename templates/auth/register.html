@@ -23,7 +23,7 @@
             <!-- Username field -->
             <div class="form-group">
                 <label for="username">Username <span style="color:red;">*</span></label>
-                <input type="text" id="username" name="username" required placeholder="Choose a username" class="form-control">
+                    <input type="text" id="username" name="username" placeholder="Choose a username" class="form-control">
                 {% if form.username.errors %}
                     <span class="error">{{ form.username.errors.0 }}</span>
                 {% endif %}
@@ -32,14 +32,14 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="first_name">First Name</label>
-                    <input type="text" id="first_name" name="first_name" required class="form-control">
+                        <input type="text" id="first_name" name="first_name" class="form-control">
                     {% if form.first_name.errors %}
                         <span class="error">{{ form.first_name.errors.0 }}</span>
                     {% endif %}
                 </div>
                 <div class="form-group">
                     <label for="last_name">Last Name</label>
-                    <input type="text" id="last_name" name="last_name" required class="form-control">
+                        <input type="text" id="last_name" name="last_name" class="form-control">
                     {% if form.last_name.errors %}
                         <span class="error">{{ form.last_name.errors.0 }}</span>
                     {% endif %}
@@ -48,7 +48,7 @@
 
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required class="form-control">
+                    <input type="email" id="email" name="email" class="form-control">
                 {% if form.email.errors %}
                     <span class="error">{{ form.email.errors.0 }}</span>
                 {% endif %}
@@ -56,7 +56,7 @@
 
             <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required class="form-control">
+                    <input type="tel" id="phone" name="phone" class="form-control">
                 {% if form.phone.errors %}
                     <span class="error">{{ form.phone.errors.0 }}</span>
                 {% endif %}
@@ -64,7 +64,7 @@
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required class="form-control">
+                    <input type="password" id="password" name="password" class="form-control">
                 {% if form.password.errors %}
                     <span class="error">{{ form.password.errors.0 }}</span>
                 {% endif %}
@@ -72,7 +72,7 @@
 
             <div class="form-group">
                 <label for="password_confirm">Confirm Password</label>
-                <input type="password" id="password_confirm" name="password_confirm" required class="form-control">
+                    <input type="password" id="password_confirm" name="password_confirm" class="form-control">
                 {% if form.password_confirm.errors %}
                     <span class="error">{{ form.password_confirm.errors.0 }}</span>
                 {% endif %}
@@ -109,7 +109,7 @@
             </div>
 
             <label class="terms-checkbox">
-                <input type="checkbox" name="agree_terms" required>
+                 <input type="checkbox" name="agree_terms">
                 I agree to the Terms of Service and Privacy Policy
             </label>
 
