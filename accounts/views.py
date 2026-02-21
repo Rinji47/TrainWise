@@ -35,34 +35,52 @@ def home(request):
 def register(request):
     if request.method == 'POST':
         # Required fields
-        username = request.POST.get('username').strip()
-        first_name = request.POST.get('first_name').strip()
-        last_name = request.POST.get('last_name').strip()
-        email = request.POST.get('email').strip()
-        phone = request.POST.get('phone').strip()
-        password = request.POST.get('password')
-        password_confirm = request.POST.get('password_confirm')
-
-        # Optional fields
-        gender = request.POST.get('gender') or None
+        username = request.POST.get('username', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        password = request.POST.get('password', '')
+        password_confirm = request.POST.get('password_confirm', '')
+        gender = request.POST.get('gender', '')
+        agree_terms = request.POST.get('agree_terms', None)
         age = request.POST.get('age') or None
         height = request.POST.get('height') or None
         weight = request.POST.get('weight') or None
         fitness_goal = request.POST.get('fitness_goal') or None
 
-        # Validate password match
+        errors = []
+        if not username:
+            errors.append("Username is required.")
+        if not first_name:
+            errors.append("First name is required.")
+        if not last_name:
+            errors.append("Last name is required.")
+        if not email:
+            errors.append("Email is required.")
+        if not phone:
+            errors.append("Phone number is required.")
+        if not password:
+            errors.append("Password is required.")
+        if not password_confirm:
+            errors.append("Password confirmation is required.")
+        if not gender:
+            errors.append("Please select a gender.")
+        if not agree_terms:
+            errors.append("You must agree to the Terms of Service.")
+
         if password != password_confirm:
-            messages.error(request, "Passwords do not match.")
-            return render(request, 'auth/register.html', request.POST)
+            errors.append("Passwords do not match.")
+        if password and len(password) < 8:
+            errors.append("Password must be at least 8 characters.")
 
-        # Check if username or email already exists
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already taken.")
-            return render(request, 'auth/register.html', request.POST)
-
+            errors.append("Username already taken.")
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email is already registered.")
-            return render(request, 'auth/register.html', request.POST)
+            errors.append("Email is already registered.")
+
+        if errors:
+            return render(request, 'auth/register.html', {'errors': errors, **request.POST})
 
         # Convert numeric fields
         age = int(age) if age else None
