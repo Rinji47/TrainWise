@@ -620,8 +620,8 @@ def pay_pending_payment(request, payment_id):
     transaction_uuid = payment.uid
     paymentEsewa = EsewaPayment(
         product_code="EPAYTEST",
-        success_url=f"http://localhost:8000/payment/success/{transaction_uuid}/",
-        failure_url=f"http://localhost:8000/payment/failure/{transaction_uuid}/",
+        success_url=f"https://trainwise-eor6.onrender.com/payment/success/{transaction_uuid}/",
+        failure_url=f"https://trainwise-eor6.onrender.com/payment/failure/{transaction_uuid}/",
         amount=float(payment.amount),
         tax_amount=0,
         total_amount=float(payment.amount),

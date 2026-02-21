@@ -243,8 +243,8 @@ def book_private_class_details(request, trainer_id):
 
         paymentEsewa = EsewaPayment(
             product_code="EPAYTEST",
-            success_url=f"http://localhost:8000/private-class/success/{transaction_uuid}/",
-            failure_url=f"http://localhost:8000/private-class/failure/{transaction_uuid}/",
+            success_url=f"https://trainwise-eor6.onrender.com/private-class/success/{transaction_uuid}/",
+            failure_url=f"https://trainwise-eor6.onrender.com/private-class/failure/{transaction_uuid}/",
             amount=float(calculated_price),
             tax_amount=0,
             total_amount=float(calculated_price),
@@ -355,8 +355,8 @@ def private_class_success(request, uid):
     
     paymentEsewa = EsewaPayment(
         product_code="EPAYTEST",
-        success_url=f"http://localhost:8000/private-class/success/{uid}/",
-        failure_url=f"http://localhost:8000/private-class/failure/{uid}/",
+        success_url=f"https://trainwise-eor6.onrender.com/private-class/success/{uid}/",
+        failure_url=f"https://trainwise-eor6.onrender.com/private-class/failure/{uid}/",
         amount=float(pending_data['price']),
         tax_amount=0,
         total_amount=float(pending_data['price']),
